@@ -2,8 +2,8 @@
  * This file is part of the "2048 Console Clone" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a
- * Date:         July 7, 2014
+ * Version:      0.3a1
+ * Date:         July 8, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, board.h, gs.h
  * --------------------------------------------------------------
@@ -25,24 +25,24 @@
 
 #define _VALID_MOVEDIR(dir)            \
 (                                      \
-	(dir) == GS_NEXTMOVE_NONE      \
-	|| (dir) == GS_NEXTMOVE_UP     \
-	|| (dir) == GS_NEXTMOVE_DOWN   \
-	|| (dir) == GS_NEXTMOVE_LEFT   \
-	|| (dir) == GS_NEXTMOVE_RIGHT  \
+	(dir) == GS_PREVMOVE_NONE      \
+	|| (dir) == GS_PREVMOVE_UP     \
+	|| (dir) == GS_PREVMOVE_DOWN   \
+	|| (dir) == GS_PREVMOVE_LEFT   \
+	|| (dir) == GS_PREVMOVE_RIGHT  \
 )
 
 #define _MVDIR_TO_LABEL(dir)                                          \
 (                                                                     \
-	(dir) == GS_NEXTMOVE_UP                                       \
+	(dir) == GS_PREVMOVE_UP                                       \
 		? "UP"                                                \
-		: (dir) == GS_NEXTMOVE_DOWN                           \
+		: (dir) == GS_PREVMOVE_DOWN                           \
 			? "DOWN"                                      \
-			: (dir) == GS_NEXTMOVE_LEFT                   \
+			: (dir) == GS_PREVMOVE_LEFT                   \
 				? "LEFT"                              \
-				: (dir) == GS_NEXTMOVE_RIGHT          \
+				: (dir) == GS_PREVMOVE_RIGHT          \
 					? "RIGHT"                     \
-					: (dir) == GS_NEXTMOVE_NONE   \
+					: (dir) == GS_PREVMOVE_NONE   \
 						? "NONE"              \
 						: "ERROR"             \
 )
@@ -53,6 +53,7 @@ struct _GameState {
 	long int score;        /* current score */
 	long int bscore;       /* best-score across multiple games */
 	int      prevmv;       /* direction of previous move */
+	int      iswin;        /* has the sentinel value reached? */
 };
 
 /* Single node for game-state stacks */
@@ -91,7 +92,8 @@ GameState *new_gamestate( int dim )
 
 	state->score  = 0;
 	state->bscore = 0;
-	state->prevmv = GS_NEXTMOVE_NONE;
+	state->iswin  = 0;  /* false */
+	state->prevmv = GS_PREVMOVE_NONE;
 
 	return state;
 }
@@ -130,6 +132,7 @@ int gamestate_copy( GameState *dst, const GameState *src )
 	}
 	dst->score  = src->score;
 	dst->bscore = src->bscore;
+	dst->iswin  = src->iswin;
 	dst->prevmv = src->prevmv;
 
 	return 1;  /* true */
@@ -151,7 +154,8 @@ int gamestate_reset( GameState *state )
 		2 * board_get_nrandom( state->board )
 		);
 	state->score  = 0;
-	state->prevmv = GS_NEXTMOVE_NONE;
+	state->iswin  = 0;  /* false */
+	state->prevmv = GS_PREVMOVE_NONE;
 
 	return 1;
 }
@@ -195,6 +199,20 @@ long int gamestate_get_bestscore( const GameState *state )
 	}
 
 	return state->bscore;
+}
+
+/* --------------------------------------------------------------
+ *
+ * --------------------------------------------------------------
+ */
+int gamestate_get_iswin( const GameState *state )
+{
+	if ( NULL == state ) {
+		DBGF( "%s", "NULL pointer argument!" );
+		return 0;
+	}
+
+	return state->iswin;
 }
 
 /* --------------------------------------------------------------
@@ -264,6 +282,21 @@ int gamestate_set_bestscore( GameState *state, long int bscore )
  *
  * --------------------------------------------------------------
  */
+int gamestate_set_iswin( GameState *state, int iswin )
+{
+	if ( NULL == state ) {
+		DBGF( "%s", "NULL pointer argument!" );
+		return 0; /* false */
+	}
+
+	state->iswin = iswin;
+	return 1;  /* true */
+}
+
+/* --------------------------------------------------------------
+ *
+ * --------------------------------------------------------------
+ */
 int gamestate_set_prevmove( GameState *state, int prevmv )
 {
 	if ( NULL == state ) {
@@ -297,12 +330,13 @@ char *gamestate_to_text( const GameState *state )
 		return txtout;
 	}
 
-	/* state->score + state->bscore + state->prevmv */
+	/* state->score + state->bscore + state->iswin + state->prevmv */
 	test = printf_to_text(
-		"%s%ld %ld %d@",
+		"%s%ld %ld %d %d@",
 		NULL == txtout ? "\0" : txtout,
 		state->score,
 		state->bscore,
+		state->iswin,
 		state->prevmv
 		);
 	if ( NULL == test ) {
@@ -341,7 +375,7 @@ ret_failure:
  * GameState *new_gamestate_from_text():
  *
  * NOTES: The expected format of the text is the following:
- *        "score bscore prevmv@board-meta-data#board-tile-values"
+ *        "score bscore iswin prevmv@board-meta-data#board-tile-values"
  * --------------------------------------------------------------
  */
 GameState *new_gamestate_from_text( char *text )
@@ -383,15 +417,18 @@ GameState *new_gamestate_from_text( char *text )
 	}
 	board = board_free( board );
 
-	/* from the 1st token, get the state meta-data (score, bscore) */
+	/* from the 1st token, get the state meta-data
+	 * (score, bscore, iswin, prevmv)
+         */
 	n = sscanf(
 		tokens[0],
-		"%ld %ld %d",
+		"%ld %ld %d %d",
 		&state->score,
 		&state->bscore,
+		&state->iswin,
 		&state->prevmv
 		);
-	if ( n < 3 ) {
+	if ( n < 4 ) {
 		DBGF( "%s", "sscanf(tokens[0]) failed!" );
 		goto ret_failure;
 	}

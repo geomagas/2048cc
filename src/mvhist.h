@@ -2,8 +2,8 @@
  * This file is part of the "2048 Console Clone" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a
- * Date:         July 7, 2014
+ * Version:      0.3a1
+ * Date:         July 8, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: gs.h
  * --------------------------------------------------------------
@@ -44,6 +44,7 @@ extern int              mvhist_pop_undo_stack( MovesHistory *mvhist );
 
 /* redo stack */
 
+extern int              mvhist_free_redo_stack( MovesHistory *mvhist );
 extern int              mvhist_isempty_redo_stack( const MovesHistory *mvhist );
 extern int              mvhist_push_redo_stack(
                                 MovesHistory    *mvhist,
@@ -63,7 +64,7 @@ extern GSNode           *mvhist_new_replay_stack(
                                MovesHistory *mvhist,
                                unsigned int delay
                                );
-extern GSNode           *mvhist_free_replay_stack( MovesHistory *mvhist );
+extern int              mvhist_free_replay_stack( MovesHistory *mvhist );
 
 extern long int         mvhist_peek_replay_stack_count(
                                const MovesHistory *mvhist
