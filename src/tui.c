@@ -1508,8 +1508,9 @@ int tui_draw_iobar_prompt_loadreplay_nofile( const Tui *tui )
  */
 void tui_draw_iobar2_replaynavigation( const Tui *tui )
 {
-	const ConColors *cc = NULL;
-	long int nmoves=0, imove=0;
+	const ConColors *cc = NULL;     /* iobar2 colors */
+	const ConColors *hc = NULL;     /* help-box colors */
+	long int nmoves=0, imove=0, nchars=0;
 	long int nredo = 0;
 
 	if ( NULL == tui ) {
@@ -1518,24 +1519,35 @@ void tui_draw_iobar2_replaynavigation( const Tui *tui )
 	}
 
 	cc = tui_skin_get_colors_iobar2( tui->skin );
+	hc = tui_skin_get_colors_help_box( tui->skin );
+
 	nmoves = mvhist_get_replay_nmoves( tui->mvhist );
 	imove  = nmoves - mvhist_get_replay_itcount( tui->mvhist ) + 1;
 	nredo  = mvhist_peek_redo_stack_count( tui->mvhist );
 
 	_clear_iobar2( tui );
-	_printfxy(
-		cc->fg,
-		cc->bg,
-		tui->layout.iobar2.x,
-		tui->layout.iobar2.y,
-		"Home  <-  p)lay  ->  End  :%ld/%ld",
-		imove, nmoves
-		);
+	nchars = _printfxy(
+			cc->fg,
+			cc->bg,
+			tui->layout.iobar2.x,
+			tui->layout.iobar2.y,
+			"Home  <-  p)lay  ->  End  :%ld/%ld",
+			imove, nmoves
+			);
 
 	/* if redo-stack, show its count */
-	if ( 0 != nredo ) {
-		printf( "+%ld", nredo );
-		fflush( stdout );
+	if ( 0 != nredo )
+	{
+		my_gotoxy(
+			tui->layout.iobar2.x + nchars,
+			tui->layout.iobar2.y
+			);
+		CONOUT_PRINTF(
+			hc->fg,
+			hc->bg,
+			"+%ld",
+			nredo
+			);
 	}
 }
 
@@ -1686,8 +1698,9 @@ void tui_draw_iobar_autoreplayinfo( const Tui *tui )
  */
 void tui_draw_iobar_movescounter( const Tui *tui )
 {
-	const ConColors *cc = NULL;
-	long int nredo = 0;
+	const ConColors *cc = NULL;    /* iobar colors */
+	const ConColors *hc = NULL;    /* help-box colors */
+	long int nredo = 0, nchars = 0;
 
 	if ( NULL == tui ) {
 		DBGF( "%s", "NULL pointer argument (tui)" );
@@ -1695,22 +1708,32 @@ void tui_draw_iobar_movescounter( const Tui *tui )
 	}
 
 	cc = tui_skin_get_colors_iobar( tui->skin );
+	hc = tui_skin_get_colors_help_box( tui->skin );
 	nredo  = mvhist_peek_redo_stack_count( tui->mvhist );
 
 	_clear_iobar( tui );
-	_printfxy(
-		cc->fg,
-		cc->bg,
-		tui->layout.iobar.x,
-		tui->layout.iobar.y,
-		"Moves: %ld",
-		mvhist_peek_undo_stack_count( tui->mvhist )
-		);
+	nchars = _printfxy(
+			cc->fg,
+			cc->bg,
+			tui->layout.iobar.x,
+			tui->layout.iobar.y,
+			"Moves: %ld",
+			mvhist_peek_undo_stack_count( tui->mvhist )
+			);
 
 	/* if redo-stack, show its count */
-	if ( 0 != nredo ) {
-		printf( "+%ld", nredo );
-		fflush( stdout );
+	if ( 0 != nredo )
+	{
+		my_gotoxy(
+			tui->layout.iobar.x + nchars,
+			tui->layout.iobar.y
+			);
+		CONOUT_PRINTF(
+			hc->fg,
+			hc->bg,
+			"+%ld",
+			nredo
+			);
 	}
 }
 
