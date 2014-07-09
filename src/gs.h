@@ -2,8 +2,8 @@
  * This file is part of the "2048 Console Clone" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a1
- * Date:         July 8, 2014
+ * Version:      0.3a2
+ * Date:         July 9, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * --------------------------------------------------------------
  *
