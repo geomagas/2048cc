@@ -2,8 +2,8 @@
  * This file is part of the "2048 Console Clone" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a
- * Date:         July 7, 2014
+ * Version:      0.3a2
+ * Date:         July 9, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, gs.h, mvhist.h
  * --------------------------------------------------------------
@@ -179,6 +179,22 @@ int mvhist_isempty_redo_stack( const MovesHistory *mvhist )
 }
 
 /* --------------------------------------------------------------
+ * int mvhist_free_redo_stack():
+ *
+ * --------------------------------------------------------------
+ */
+int mvhist_free_redo_stack( MovesHistory *mvhist )
+{
+	if ( NULL == mvhist ) {
+		DBGF( "%s", "NULL pointer argument!" );
+		return 0;  /* false */
+	}
+
+	mvhist->redo = gsstack_free( &mvhist->redo );
+	return 1;  /* true */
+}
+
+/* --------------------------------------------------------------
  * int mvhist_push_redo_stack():
  *
  * --------------------------------------------------------------
@@ -260,15 +276,15 @@ GSNode *mvhist_new_replay_stack( MovesHistory *mvhist, unsigned int delay )
 }
 
 /* --------------------------------------------------------------
- * GSNode *mvhist_free_replay_stack():
+ int mvhist_free_replay_stack():
  *
  * --------------------------------------------------------------
  */
-GSNode *mvhist_free_replay_stack( MovesHistory *mvhist )
+int mvhist_free_replay_stack( MovesHistory *mvhist )
 {
 	if ( NULL == mvhist ) {
 		DBGF( "%s", "calloc() failed!" );
-		return NULL;
+		return 0;  /* false */
 	}
 
 	mvhist->replay.stack   = gsstack_free( &mvhist->replay.stack );
@@ -276,7 +292,7 @@ GSNode *mvhist_free_replay_stack( MovesHistory *mvhist )
 	mvhist->replay.itcount = 0;
 	mvhist->replay.delay   = 750;
 
-	return NULL;
+	return 1;  /* true */
 }
 
 /* --------------------------------------------------------------

@@ -2,8 +2,8 @@
  * This file is part of the "2048 Console Clone" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a
- * Date:         July 7, 2014
+ * Version:      0.3a2
+ * Date:         July 9, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: con_color.h, my.h, common.h, board.h,
  *               gs.h, mvhist.h, tui_skin.h
@@ -1494,19 +1494,23 @@ int tui_draw_iobar_prompt_loadreplay_nofile( const Tui *tui )
 }
 
 /* --------------------------------------------------------------
- * int tui_draw_iobar2_replaynavigation():
+ * void tui_draw_iobar2_replaynavigation():
  *
  * Draw on the console screen the io-bar2 of the specified tui object,
- * containing the replay navigation commands and moves info.
+ * containing the replay navigation commands, along with move-counter
+ * info.
  *
- * NOTE: Read the comments of the function: tui_draw_titlebar()
- *       for details about the primitiveness of the implementation.
+ * NOTES: Used in replay-mode.
+ * 
+ *        Read the comments of the function: tui_draw_titlebar()
+ *        for details about the primitiveness of the implementation.
  * --------------------------------------------------------------
  */
 void tui_draw_iobar2_replaynavigation( const Tui *tui )
 {
 	const ConColors *cc = NULL;
 	long int nmoves=0, imove=0;
+	long int nredo = 0;
 
 	if ( NULL == tui ) {
 		DBGF( "%s", "NULL pointer argument (tui)" );
@@ -1516,6 +1520,7 @@ void tui_draw_iobar2_replaynavigation( const Tui *tui )
 	cc = tui_skin_get_colors_iobar2( tui->skin );
 	nmoves = mvhist_get_replay_nmoves( tui->mvhist );
 	imove  = nmoves - mvhist_get_replay_itcount( tui->mvhist ) + 1;
+	nredo  = mvhist_peek_redo_stack_count( tui->mvhist );
 
 	_clear_iobar2( tui );
 	_printfxy(
@@ -1526,6 +1531,12 @@ void tui_draw_iobar2_replaynavigation( const Tui *tui )
 		"Home  <-  p)lay  ->  End  :%ld/%ld",
 		imove, nmoves
 		);
+
+	/* if redo-stack, show its count */
+	if ( 0 != nredo ) {
+		printf( "+%ld", nredo );
+		fflush( stdout );
+	}
 }
 
 /* --------------------------------------------------------------
@@ -1534,8 +1545,10 @@ void tui_draw_iobar2_replaynavigation( const Tui *tui )
  * Draw on the console screen the io-bar2 of the specified tui object,
  * containing the filename to save current replay into.
  *
- * NOTE: Read the comments of the function: tui_draw_titlebar()
- *       for details about the primitiveness of the implementation.
+ * NOTES: Used in replay-mode.
+ *
+ *        Read the comments of the function: tui_draw_titlebar()
+ *        for details about the primitiveness of the implementation.
  * --------------------------------------------------------------
  */
 void tui_draw_iobar2_savereplayname( const Tui *tui, const char *fname )
@@ -1566,8 +1579,12 @@ void tui_draw_iobar2_savereplayname( const Tui *tui, const char *fname )
  * Draw on the console screen the io-bar-2 of the specified tui
  * object, containing the moves counter.
  *
- * NOTE: Read the comments of the function: tui_draw_titlebar()
- *       for details about the primitiveness of the implementation.
+ * NOTES: Used when game is over. Normally the moves-counter is
+ *        shown in iobar, but when game is over the iobar shows
+ *        the gameover msg/prompt.
+ *
+ *        Read the comments of the function: tui_draw_titlebar()
+ *        for details about the primitiveness of the implementation.
  * --------------------------------------------------------------
  */
 void tui_draw_iobar2_movescounter( const Tui *tui )
@@ -1661,7 +1678,7 @@ void tui_draw_iobar_autoreplayinfo( const Tui *tui )
  * void tui_draw_iobar_movescounter():
  *
  * Draw on the console screen the io-bar of the specified tui object,
- * containing the move counter.
+ * containing the moves-counter.
  *
  * NOTE: Read the comments of the function: tui_draw_titlebar()
  *       for details about the primitiveness of the implementation.
@@ -1670,6 +1687,7 @@ void tui_draw_iobar_autoreplayinfo( const Tui *tui )
 void tui_draw_iobar_movescounter( const Tui *tui )
 {
 	const ConColors *cc = NULL;
+	long int nredo = 0;
 
 	if ( NULL == tui ) {
 		DBGF( "%s", "NULL pointer argument (tui)" );
@@ -1677,6 +1695,7 @@ void tui_draw_iobar_movescounter( const Tui *tui )
 	}
 
 	cc = tui_skin_get_colors_iobar( tui->skin );
+	nredo  = mvhist_peek_redo_stack_count( tui->mvhist );
 
 	_clear_iobar( tui );
 	_printfxy(
@@ -1687,6 +1706,12 @@ void tui_draw_iobar_movescounter( const Tui *tui )
 		"Moves: %ld",
 		mvhist_peek_undo_stack_count( tui->mvhist )
 		);
+
+	/* if redo-stack, show its count */
+	if ( 0 != nredo ) {
+		printf( "+%ld", nredo );
+		fflush( stdout );
+	}
 }
 
 /* --------------------------------------------------------------

@@ -1,3 +1,16 @@
+/****************************************************************
+ * This file is part of the "2048 Console Clone" game.
+ *
+ * Author:       migf1 <mig_f1@hotmail.com>
+ * Version:      0.3a2
+ * Date:         July 9, 2014
+ * License:      Free Software (see comments in main.c for limitations)
+ * Dependencies: common.h
+ * --------------------------------------------------------------
+ *
+ ****************************************************************
+ */
+
 #define COMMON_C
 
 #include <stdio.h>        /* vsnprintf() */

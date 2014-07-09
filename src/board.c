@@ -2,8 +2,8 @@
  * This file is part of the "2048 Console Clone" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a
- * Date:         July 7, 2014
+ * Version:      0.3a2
+ * Date:         July 9, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, board.h
  * --------------------------------------------------------------
@@ -180,7 +180,7 @@ static inline int _row_has_gaps_begend( const Board *board, int i )
 	const int END = BEG + DIM-1;    /* idx of last elem in ith row */
 
 	/* A gap is when 2 adjacent cells contain a 0 and a non-0
-	 * value, respectively (note that END is is an index, not a length).
+	 * value, respectively (note that END is an index, not a length).
 	 */
 	for (idx=BEG; idx < END; idx++)
 	{
@@ -213,7 +213,7 @@ static inline int _row_has_gaps_endbeg( const Board *board, int i )
 	const int END = BEG + DIM-1;    /* idx of last elem in ith row */
 
 	/* A gap is when 2 adjacent cells contain a 0 and a non-0
-	 * value, respectively.
+	 * value, respectively (note that END is an index, not a length).
 	 */
 	for (idx=END; idx > BEG; idx--)
 	{
