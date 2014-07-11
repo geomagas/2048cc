@@ -1,9 +1,9 @@
-2048
-====
+2048cc
+======
 
 Author:       migf1 <mig_f1@hotmail.com>
-Version:      0.3a2
-Date:         July 9, 2014
+Version:      0.3a3
+Date:         July 11, 2014
 
 Console clone of the game 2048 ( http://gabrielecirulli.github.io/2048/ )
 
@@ -104,6 +104,12 @@ stop the auto-play... you'll have to wait until it is finished).
 Replays do NOT take into account any Undone moves! That is, the last move in
 a replay is the one corresponding to your last Undo. However, they do display
 any available moves to be Redone (when exiting the replay-mode).
+
+While viewing a replay, you can see on the lower-right part of the screen what
+move was applied to the board in the previous move, along with what move was
+applied to the current move for yielding the next move. For example, when you
+see: UP|RIGHT, it means that in the previous move the board was played upwards,
+and that for the next move the board was played toward the right side.
 
 Exiting the replay-mode, sets the game to the last recorded move of the replay,
 without counting any Undone moves (but, if any, their count will be displayed
