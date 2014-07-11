@@ -1,9 +1,9 @@
 /****************************************************************
- * This file is part of the "2048 Console Clone" game.
+ * This file is part of the "2048cc" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a2
- * Date:         July 9, 2014
+ * Version:      0.3a3
+ * Date:         July 11, 2014
  * License:      Free Software (see following comments for limitations)
  * Dependencies: common.h, board.h, gs.h, mvhist.h, tui.h
  * --------------------------------------------------------------
@@ -72,21 +72,21 @@
 	|| TUI_KEY_BOARD_8 == (key) \
 )
 
-/* Macro for converting an input key to a GS_PREVMOVE direction
+/* Macro for converting an input key to a GS_MVDIR direction
  * (valid keys are defined in tui.h, while previous-move directions
  *  are defined in gs.h).
  */
 #define _KEY_TO_MVDIR(key)                                  \
 (                                                           \
 	(key) == TUI_KEY_UP                                 \
-		? GS_PREVMOVE_UP                            \
+		? GS_MVDIR_UP                            \
 		: (key) == TUI_KEY_DOWN                     \
-			? GS_PREVMOVE_DOWN                  \
+			? GS_MVDIR_DOWN                  \
 			: (key) == TUI_KEY_LEFT             \
-				? GS_PREVMOVE_LEFT          \
+				? GS_MVDIR_LEFT          \
 				: (key) == TUI_KEY_RIGHT    \
-					? GS_PREVMOVE_RIGHT \
-					: GS_PREVMOVE_NONE  \
+					? GS_MVDIR_RIGHT \
+					: GS_MVDIR_NONE  \
 )
 
 /* --------------------------------------------------------------
@@ -232,6 +232,12 @@ static int _do_play_board(
 
 	/* update gamestate's prevmv */
 	gamestate_set_prevmove( gs, _KEY_TO_MVDIR(key) );
+
+	/* update nextmove of previous gamestate
+	 * (deliberately violate constness of prevstate)
+	 */
+	const GameState *prevstate = mvhist_peek_undo_stack_state(mvhist);
+	gamestate_set_nextmove( (GameState *)prevstate, _KEY_TO_MVDIR(key) );
 
 	/* was it a winning move? */
 	if ( iswin ) {
@@ -580,6 +586,7 @@ static void _do_replay_save( MovesHistory *mvhist, Tui *tui )
 
 	if ( 'y' == tolower( tui_draw_iobar_prompt_savereplay(tui) ) )
 	{
+		tui_draw_iobar_savingreplay(tui);
 		if ( !mvhist_save_to_file(mvhist, fname) ) {
 			DBGF( "%s", "mvhist_save_to_file() failed" );
 			return;

@@ -1,9 +1,9 @@
 /****************************************************************
- * This file is part of the "2048 Console Clone" game.
+ * This file is part of the "2048cc" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a2
- * Date:         July 9, 2014
+ * Version:      0.3a3
+ * Date:         July 11, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: my.h, board.h, gs.h, mvhist.h
  * --------------------------------------------------------------
@@ -90,6 +90,7 @@ extern void tui_draw_iobar2_savereplayname(
 extern void tui_draw_iobar2_movescounter( const Tui *tui );
 extern void tui_draw_iobar2_mainmenu( const Tui *tui );
 extern void tui_draw_iobar_movescounter( const Tui *tui );
+extern void tui_draw_iobar_savingreplay( const Tui *tui );
 extern void tui_draw_iobar_autoreplayinfo( const Tui *tui );
 
 extern void tui_prompt_replay_fname_to_load( const Tui *tui, char *fname );

@@ -1,9 +1,9 @@
 /****************************************************************
- * This file is part of the "2048 Console Clone" game.
+ * This file is part of the "2048cc" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a2
- * Date:         July 9, 2014
+ * Version:      0.3a3
+ * Date:         July 11, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * --------------------------------------------------------------
  *
@@ -19,11 +19,11 @@ typedef struct _GameState GameState;
 typedef struct _GSNode    GSNode;
 
 enum {  /* GameState direction of previous-move */
-	GS_PREVMOVE_NONE = 0,
-	GS_PREVMOVE_UP,
-	GS_PREVMOVE_DOWN,
-	GS_PREVMOVE_LEFT,
-	GS_PREVMOVE_RIGHT
+	GS_MVDIR_NONE = 0,
+	GS_MVDIR_UP,
+	GS_MVDIR_DOWN,
+	GS_MVDIR_LEFT,
+	GS_MVDIR_RIGHT
 };
 
 #ifndef GS_C
@@ -39,13 +39,16 @@ extern Board      *gamestate_get_board( const GameState *state );
 extern long int   gamestate_get_score( const GameState *state );
 extern long int   gamestate_get_bestscore( const GameState *state );
 extern int        gamestate_get_iswin( const GameState *state );
+extern int        gamestate_get_prevmove( const GameState *state );
 extern const char *gamestate_get_prevmove_label( const GameState *state );
+extern const char *gamestate_get_nextmove_label( const GameState *state );
 
 extern int        gamestate_set_board_reference( GameState *state, Board *board );
 extern int        gamestate_set_score( GameState *state, long int score );
 extern int        gamestate_set_bestscore( GameState *state, long int bscore );
 extern int        gamestate_set_iswin( GameState *state, int iswin );
 extern int        gamestate_set_prevmove( GameState *state, int prevmv );
+extern int        gamestate_set_nextmove( GameState *state, int nextmv );
 
 extern char       *gamestate_to_text( const GameState *state );
 extern GameState  *new_gamestate_from_text( char *text );

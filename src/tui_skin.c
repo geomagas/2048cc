@@ -1,9 +1,9 @@
 /****************************************************************
- * This file is part of the "2048 Console Clone" game.
+ * This file is part of the "2048cc" game.
  *
  * Author:       migf1 <mig_f1@hotmail.com>
- * Version:      0.3a2
- * Date:         July 9, 2014
+ * Version:      0.3a3
+ * Date:         July 11, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: con_color.h, common.h
  * --------------------------------------------------------------
@@ -190,7 +190,7 @@ static void _set_dark( TuiSkin *skin )
 	CONOUT_CPYCLR( skin->tile2048.bg, BG_YELLOW );
 
 	/* tile-big */
-	CONOUT_CPYCLR( skin->tilebig.fg, FG_WHITE );
+	CONOUT_CPYCLR( skin->tilebig.fg, FG_RED );
 	CONOUT_CPYCLR( skin->tilebig.bg, BG_YELLOW );
 
 	/* scores-bar */
@@ -308,7 +308,7 @@ static void _set_light( TuiSkin *skin )
 	CONOUT_CPYCLR( skin->tile2048.bg, BG_YELLOW );
 
 	/* tile-big */
-	CONOUT_CPYCLR( skin->tilebig.fg, FG_WHITE );
+	CONOUT_CPYCLR( skin->tilebig.fg, FG_RED );
 	CONOUT_CPYCLR( skin->tilebig.bg, BG_YELLOW );
 
 	/* scores-bar */
