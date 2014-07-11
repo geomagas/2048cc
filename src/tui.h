@@ -90,6 +90,7 @@ extern void tui_draw_iobar2_savereplayname(
 extern void tui_draw_iobar2_movescounter( const Tui *tui );
 extern void tui_draw_iobar2_mainmenu( const Tui *tui );
 extern void tui_draw_iobar_movescounter( const Tui *tui );
+extern void tui_draw_iobar_savingreplay( const Tui *tui );
 extern void tui_draw_iobar_autoreplayinfo( const Tui *tui );
 
 extern void tui_prompt_replay_fname_to_load( const Tui *tui, char *fname );

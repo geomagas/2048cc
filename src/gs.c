@@ -23,28 +23,28 @@
 #include "board.h"
 #include "gs.h"
 
-#define _VALID_MOVEDIR(dir)            \
-(                                      \
-	(dir) == GS_PREVMOVE_NONE      \
-	|| (dir) == GS_PREVMOVE_UP     \
-	|| (dir) == GS_PREVMOVE_DOWN   \
-	|| (dir) == GS_PREVMOVE_LEFT   \
-	|| (dir) == GS_PREVMOVE_RIGHT  \
+#define _VALID_MVDIR(dir)           \
+(                                   \
+	(dir) == GS_MVDIR_NONE      \
+	|| (dir) == GS_MVDIR_UP     \
+	|| (dir) == GS_MVDIR_DOWN   \
+	|| (dir) == GS_MVDIR_LEFT   \
+	|| (dir) == GS_MVDIR_RIGHT  \
 )
 
-#define _MVDIR_TO_LABEL(dir)                                          \
-(                                                                     \
-	(dir) == GS_PREVMOVE_UP                                       \
-		? "UP"                                                \
-		: (dir) == GS_PREVMOVE_DOWN                           \
-			? "DOWN"                                      \
-			: (dir) == GS_PREVMOVE_LEFT                   \
-				? "LEFT"                              \
-				: (dir) == GS_PREVMOVE_RIGHT          \
-					? "RIGHT"                     \
-					: (dir) == GS_PREVMOVE_NONE   \
-						? "NONE"              \
-						: "ERROR"             \
+#define _MVDIR_TO_LABEL(dir)                                      \
+(                                                                 \
+	(dir) == GS_MVDIR_UP                                      \
+		? "UP"                                            \
+		: (dir) == GS_MVDIR_DOWN                          \
+			? "DOWN"                                  \
+			: (dir) == GS_MVDIR_LEFT                  \
+				? "LEFT"                          \
+				: (dir) == GS_MVDIR_RIGHT         \
+					? "RIGHT"                 \
+					: (dir) == GS_MVDIR_NONE  \
+						? "NONE"          \
+						: "ERROR"         \
 )
 
 /* Game-state at any time */
@@ -53,6 +53,7 @@ struct _GameState {
 	long int score;        /* current score */
 	long int bscore;       /* best-score across multiple games */
 	int      prevmv;       /* direction of previous move */
+	int      nextmv;       /* direction of next move */
 	int      iswin;        /* has the sentinel value reached? */
 };
 
@@ -93,7 +94,8 @@ GameState *new_gamestate( int dim )
 	state->score  = 0;
 	state->bscore = 0;
 	state->iswin  = 0;  /* false */
-	state->prevmv = GS_PREVMOVE_NONE;
+	state->prevmv = GS_MVDIR_NONE;
+	state->nextmv = GS_MVDIR_NONE;
 
 	return state;
 }
@@ -134,6 +136,7 @@ int gamestate_copy( GameState *dst, const GameState *src )
 	dst->bscore = src->bscore;
 	dst->iswin  = src->iswin;
 	dst->prevmv = src->prevmv;
+	dst->nextmv = src->nextmv;
 
 	return 1;  /* true */
 }
@@ -155,7 +158,8 @@ int gamestate_reset( GameState *state )
 		);
 	state->score  = 0;
 	state->iswin  = 0;  /* false */
-	state->prevmv = GS_PREVMOVE_NONE;
+	state->prevmv = GS_MVDIR_NONE;
+	state->nextmv = GS_MVDIR_NONE;
 
 	return 1;
 }
@@ -219,14 +223,42 @@ int gamestate_get_iswin( const GameState *state )
  *
  * --------------------------------------------------------------
  */
+int gamestate_get_prevmove( const GameState *state )
+{
+	if ( NULL == state ) {
+		DBGF( "%s", "NULL pointer argument!" );
+		return GS_MVDIR_NONE;
+	}
+
+	return state->prevmv;
+}
+
+/* --------------------------------------------------------------
+ *
+ * --------------------------------------------------------------
+ */
 const char *gamestate_get_prevmove_label( const GameState *state )
 {
 	if ( NULL == state ) {
 		DBGF( "%s", "NULL pointer argument!" );
-		return _MVDIR_TO_LABEL( -1 );
+		return GS_MVDIR_NONE;
 	}
 
 	return _MVDIR_TO_LABEL( state->prevmv );
+}
+
+/* --------------------------------------------------------------
+ *
+ * --------------------------------------------------------------
+ */
+const char *gamestate_get_nextmove_label( const GameState *state )
+{
+	if ( NULL == state ) {
+		DBGF( "%s", "NULL pointer argument!" );
+		return GS_MVDIR_NONE;
+	}
+
+	return _MVDIR_TO_LABEL( state->nextmv );
 }
 
 /* --------------------------------------------------------------
@@ -303,12 +335,31 @@ int gamestate_set_prevmove( GameState *state, int prevmv )
 		DBGF( "%s", "NULL pointer argument!" );
 		return 0; /* false */
 	}
-	if ( !_VALID_MOVEDIR(prevmv) ) {
+	if ( !_VALID_MVDIR(prevmv) ) {
 		DBGF( "Invalid move-direction (%d)!", prevmv );
 		return 0; /* false */
 	}
 
 	state->prevmv = prevmv;
+	return 1;  /* true */
+}
+
+/* --------------------------------------------------------------
+ *
+ * --------------------------------------------------------------
+ */
+int gamestate_set_nextmove( GameState *state, int nextmv )
+{
+	if ( NULL == state ) {
+		DBGF( "%s", "NULL pointer argument!" );
+		return 0; /* false */
+	}
+	if ( !_VALID_MVDIR(nextmv) ) {
+		DBGF( "Invalid move-direction (%d)!", nextmv );
+		return 0; /* false */
+	}
+
+	state->nextmv = nextmv;
 	return 1;  /* true */
 }
 
@@ -330,14 +381,17 @@ char *gamestate_to_text( const GameState *state )
 		return txtout;
 	}
 
-	/* state->score + state->bscore + state->iswin + state->prevmv */
+	/* state->score + state->bscore + state->iswin
+	 * + state->prevmv + state->nextmv
+	 */
 	test = printf_to_text(
-		"%s%ld %ld %d %d@",
+		"%s%ld %ld %d %d %d@",
 		NULL == txtout ? "\0" : txtout,
 		state->score,
 		state->bscore,
 		state->iswin,
-		state->prevmv
+		state->prevmv,
+		state->nextmv
 		);
 	if ( NULL == test ) {
 		DBGF( "%s", "printf_to_text() failed!" );
@@ -422,13 +476,14 @@ GameState *new_gamestate_from_text( char *text )
          */
 	n = sscanf(
 		tokens[0],
-		"%ld %ld %d %d",
+		"%ld %ld %d %d %d",
 		&state->score,
 		&state->bscore,
 		&state->iswin,
-		&state->prevmv
+		&state->prevmv,
+		&state->nextmv
 		);
-	if ( n < 4 ) {
+	if ( n < 5 ) {
 		DBGF( "%s", "sscanf(tokens[0]) failed!" );
 		goto ret_failure;
 	}

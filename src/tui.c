@@ -241,7 +241,6 @@ int _printfxy(
 }
 
 /* --------------------------------------------------------------
- * UNUSED ***
  * int _put_hspan_centered():
  *
  * Using the given foreground & background colors (fg, bg), and
@@ -675,6 +674,10 @@ Tui *new_tui( GameState *state, MovesHistory *mvhist )
 		DBGF( "%s", "NULL pointer argument (state)!" );
 		return NULL;
 	}
+	if ( NULL == mvhist ) {
+		DBGF( "%s", "NULL pointer argument (mvhist)!" );
+		return NULL;
+	}
 
 	board = gamestate_get_board( state );
 	if ( NULL == board ) {
@@ -685,11 +688,6 @@ Tui *new_tui( GameState *state, MovesHistory *mvhist )
 	tui = calloc( 1, sizeof(*tui) );
 	if ( NULL == tui ) {
 		DBGF( "%s", "calloc() failed!" );
-		return NULL;
-	}
-
-	if ( NULL == mvhist ) {
-		DBGF( "%s", "NULL pointer argument (mvhist)!" );
 		return NULL;
 	}
 
@@ -1352,8 +1350,9 @@ int tui_draw_iobar_prompt_replaycommand(
 		cc->bg,
 		tui->layout.iobar.x,
 		tui->layout.iobar.y,
-		"S)ave  L)oad  B)ack       :%s",
-		gamestate_get_prevmove_label( tui->state )
+		"S)ave  L)oad  B)ack       :%s|%s",
+		gamestate_get_prevmove_label( tui->state ),
+		gamestate_get_nextmove_label( tui->state )
 		);
 	*keymask = TUI_KEYMASK_RESET;
 	ret = tui_sys_getkey( keymask );
@@ -1552,7 +1551,7 @@ void tui_draw_iobar2_replaynavigation( const Tui *tui )
 }
 
 /* --------------------------------------------------------------
- * int tui_draw_iobar2_savereplayname():
+ * void tui_draw_iobar2_savereplayname():
  *
  * Draw on the console screen the io-bar2 of the specified tui object,
  * containing the filename to save current replay into.
@@ -1654,7 +1653,7 @@ void tui_draw_iobar2_mainmenu( const Tui *tui )
 }
 
 /* --------------------------------------------------------------
- * int tui_draw_iobar_autoreplayinfo():
+ * void tui_draw_iobar_autoreplayinfo():
  *
  * Draw on the console screen the io-bar of the specified tui object,
  * containing replay information.
@@ -1680,9 +1679,10 @@ void tui_draw_iobar_autoreplayinfo( const Tui *tui )
 		cc->bg,
 		tui->layout.iobar.x,
 		tui->layout.iobar.y,
-		"Moves delay: %.2f secs    :%s",
+		"Moves delay: %.2f secs    :%s|%s",
 		mvhist_get_replay_delay( tui->mvhist ) / 1000.f,
-		gamestate_get_prevmove_label( tui->state )
+		gamestate_get_prevmove_label( tui->state ),
+		gamestate_get_nextmove_label( tui->state )
 		);
 }
 
@@ -1738,6 +1738,37 @@ void tui_draw_iobar_movescounter( const Tui *tui )
 }
 
 /* --------------------------------------------------------------
+ * void tui_draw_iobar_savingreplay():
+ *
+ * Draw on the console screen the io-bar of the specified tui object,
+ * containing a msg while saving a replay-file.
+ *
+ * NOTE: Read the comments of the function: tui_draw_titlebar()
+ *       for details about the primitiveness of the implementation.
+ * --------------------------------------------------------------
+ */
+void tui_draw_iobar_savingreplay( const Tui *tui )
+{
+	const ConColors *sc = NULL;    /* screen colors */
+
+	if ( NULL == tui ) {
+		DBGF( "%s", "NULL pointer argument (tui)" );
+		return;
+	}
+
+	sc = tui_skin_get_colors_screen( tui->skin );
+
+	_clear_iobar( tui );
+	_printfxy(
+		sc->fg,
+		sc->bg,
+		tui->layout.iobar.x,
+		tui->layout.iobar.y,
+		"Saving, please wait..."
+		);
+}
+
+/* --------------------------------------------------------------
  * void tui_prompt_replay_fname_to_load():
  *
  * Ask user for a replay-file to load, using the colors of the iobar
@@ -1755,14 +1786,12 @@ void tui_draw_iobar_movescounter( const Tui *tui )
 void tui_prompt_replay_fname_to_load( const Tui *tui, char *fname )
 {
 	const char *prompt = "Type the name of the replay-file to load: ";
-	const ConColors *cc = NULL;
+	int y;                          /* current cursor y position */
 
 	if ( NULL == tui || NULL == fname ) {
 		DBGF( "%s", "NULL pointer argument" );
 		return;
 	}
-
-	cc = tui_skin_get_colors_iobar( tui->skin );
 
 	tui_sys_cursor_on();
 
@@ -1770,9 +1799,17 @@ void tui_prompt_replay_fname_to_load( const Tui *tui, char *fname )
 	system( LS_REPLAYS );
 	putchar( '\n' );
 
+	/* remember cursor's y-position */
+	y = my_gety();
+
+	/* clear the line a cursor's y-position */
+	CONOUT_PAINT_NTIMES( BG_DEFAULT, my_console_width() );
+
+	/* display the actual prompt */
+	my_gotoxy( 0,y );
 	_put_hspan_centered(
-		cc->fg,
-		cc->bg,
+		FG_DEFAULT,
+		BG_DEFAULT,
 		prompt,
 		strlen( prompt )
 		);

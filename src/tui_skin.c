@@ -190,7 +190,7 @@ static void _set_dark( TuiSkin *skin )
 	CONOUT_CPYCLR( skin->tile2048.bg, BG_YELLOW );
 
 	/* tile-big */
-	CONOUT_CPYCLR( skin->tilebig.fg, FG_WHITE );
+	CONOUT_CPYCLR( skin->tilebig.fg, FG_RED );
 	CONOUT_CPYCLR( skin->tilebig.bg, BG_YELLOW );
 
 	/* scores-bar */
@@ -308,7 +308,7 @@ static void _set_light( TuiSkin *skin )
 	CONOUT_CPYCLR( skin->tile2048.bg, BG_YELLOW );
 
 	/* tile-big */
-	CONOUT_CPYCLR( skin->tilebig.fg, FG_WHITE );
+	CONOUT_CPYCLR( skin->tilebig.fg, FG_RED );
 	CONOUT_CPYCLR( skin->tilebig.bg, BG_YELLOW );
 
 	/* scores-bar */
