@@ -13,44 +13,6 @@
 #ifndef MY_H
 #define MY_H
 
-/* Determine compilation OS */
-#if defined(__linux__) || defined(__linux) || defined(linux)   \
-|| defined(__gnu_linux__)
-	#define MY_OS_LINUX
-
-#elif defined(__unix__) || defined(__unix) || defined(unix)      \
-|| defined(__CYGWIN__)                                           \
-|| ( defined(__APPLE__) && defined(__MACH__) )                   \
-|| ( defined(__APPLE__) && defined(__MACH) )
-	#define MY_OS_UNIX
-
-#elif defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__) \
-|| defined(__TOS_WIN__)
-	#define MY_OS_WINDOWS
-
-#else
-	#define MY_OS_UNKNOWN
-
-#endif
-
-/* -------------
- * Includes
- * -------------
- */
-
-#if defined( MY_OS_WINDOWS )
-	#include <conio.h>
-	#include <windows.h>
-	#ifdef __POCC__
-		#define getch  _getch
-	#endif
-
-#elif defined( MY_OS_UNIX ) || defined( MY_OS_LINUX )
-	#include <sys/ioctl.h>
-	#include <termios.h>
-	#include <unistd.h>
-#endif
-
 /* ------------------
  * Constants & Macros
  * ------------------
