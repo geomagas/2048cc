@@ -98,7 +98,7 @@ enum {	/* unbufferd i/o related constants & masks */
 #ifndef MY_C
 extern int my_cursor_onoff( int onoff );
 extern int my_getch( unsigned int *outKeyMask );
-extern int my_sleep_msecs( unsigned int msecs );
+extern int my_sleep_msecs( unsigned long int msecs );
 extern int my_cls( void );
 extern int my_console_width( void );
 extern int my_console_height( void );
