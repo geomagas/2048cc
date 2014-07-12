@@ -1,0 +1,19 @@
+# Default Behavior is to normalize EOL for all files detected as text
+* text=auto
+
+# Define patterns for normalization
+*.c text
+*.h text
+Makefile text
+
+# Image files such as the screenshots in the ss directory should be left alone
+*.png binary
+*.jpg binary
+*.jpeg binary
+
+# Visual Studio build files should always have CRLF
+*.sln text eol=crlf
+*.vcproj text eol=crlf
+*.vcxproj text eol=crlf
+*.vcproj.filters text eol=crlf
+*.vcxproj.filters text eol=crlf
