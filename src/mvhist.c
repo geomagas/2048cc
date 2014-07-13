@@ -504,148 +504,44 @@ int mvhist_set_didundo( MovesHistory *mvhist, int didundo )
 }
 
 /* --------------------------------------------------------------
- * char *_replay_to_text():
+ * int _replay_append_to_fp():
  *
  * --------------------------------------------------------------
  */
-static inline char *_replay_to_text( const MovesHistory *mvhist )
+static inline int _replay_append_to_fp( const MovesHistory *mvhist, FILE *fp )
 {
-	char *txtout = NULL, *test = NULL, *tmp = NULL;
-
 	if ( NULL == mvhist ) {
 		DBGF( "%s", "NULL pointer argument (mvhist)!" );
-		return NULL;
+		return 0;  /* false */
+	}
+	if ( NULL == fp ) {
+		DBGF( "%s", "NULL pointer argument (fp)!" );
+		return 0;  /* false */
 	}
 
 	/* mvhist->replay.delay
 	 * + mvhist->replay.nmoves
 	 * + mvhist->replay.itcount
 	 */
-	test = printf_to_text(
-		"%s%lu %ld %ld\r\n",
-		NULL == txtout ? "\0" : txtout,
+	if ( fprintf(
+		fp,
+		"%lu %ld %ld\r\n",
 		mvhist->replay.delay,
 		mvhist->replay.nmoves,
 		mvhist->replay.itcount
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
+		) < 0
+	){
+		DBGF( "%s", "fprintf() failed!" );
+		return 0;  /* false */
 	}
-	txtout = test;
 
 	/* + mvhist->replay.stack */
-	tmp = gsstack_to_text( mvhist->replay.stack );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "gsstack_to_text() failed!" );
-		goto ret_failure;
-	}
-	test = printf_to_text(
-		"%s%s",
-		NULL == txtout ? "\0" : txtout,
-		tmp
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
-	}
-	txtout = test;
-	free( tmp );
-
-	return txtout;
-
-ret_failure:
-	free( tmp );
-	free( txtout );
-	return NULL;
-}
-
-/* --------------------------------------------------------------
- * char *mvhist_to_text():
- *
- * --------------------------------------------------------------
- */
-char *mvhist_to_text( const MovesHistory *mvhist )
-{
-	char *txtout = NULL, *test = NULL, *tmp = NULL;
-
-	if ( NULL == mvhist ) {
-		DBGF( "%s", "NULL pointer argument (mvhist)!" );
-		return NULL;
+	if ( !gsstack_append_to_fp(mvhist->replay.stack, fp) ) {
+		DBGF( "%s", "gsstack_append_to_fp(mvhist->replay.stack) failed!" );
+		return 0;  /* false */
 	}
 
-	/* mvhist->didundo */
-	test = printf_to_text(
-		"%s%d\r\n",
-		NULL == txtout ? "\0" : txtout,
-		mvhist->didundo
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
-	}
-	txtout = test;
-
-	/* + mvhist->undo (stack) */
-	tmp = gsstack_to_text( mvhist->undo );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "gsstack_to_text() failed!" );
-		goto ret_failure;
-	}
-	test = printf_to_text(
-		"%s%s",
-		NULL == txtout ? "\0" : txtout,
-		tmp
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
-	}
-	txtout = test;
-	free( tmp );
-
-	/* + mvhist->redo (stack) */
-	tmp = gsstack_to_text( mvhist->redo );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "gsstack_to_text() failed!" );
-		goto ret_failure;
-	}
-	test = printf_to_text(
-		"%s%s",
-		NULL == txtout ? "\0" : txtout,
-		tmp
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
-	}
-	txtout = test;
-	free( tmp );
-
-	/* + mvhist->replay */
-	tmp = _replay_to_text( mvhist );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "_replay_to_text() failed!" );
-		goto ret_failure;
-	}
-	test = printf_to_text(
-		"%s%s",
-		NULL == txtout ? "\0" : txtout,
-		tmp
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
-	}
-	txtout = test;
-	free( tmp );
-
-	return txtout;
-
-ret_failure:
-	free( tmp );
-	free( txtout );
-	return NULL;
+	return 1;
 }
 
 /* --------------------------------------------------------------
@@ -656,7 +552,6 @@ ret_failure:
 int mvhist_save_to_file( const MovesHistory *mvhist, const char *fname )
 {
 	FILE *fp  = NULL;
-	char *tmp = NULL;
 
 	if ( NULL == mvhist || NULL == fname ) {
 		DBGF( "%s", "NULL pointer argument!" );
@@ -670,53 +565,34 @@ int mvhist_save_to_file( const MovesHistory *mvhist, const char *fname )
 	}
 
 	/* mvhist->didundo */
-	if ( fprintf(fp, "%d\r\n", mvhist->didundo) < 1 ) {
+	if ( fprintf(fp, "%d\r\n", mvhist->didundo) < 0 ) {
 		DBGF( "%s", "fprintf() failed!" );
 		goto ret_failure;
 	}
 
 	/* + mvhist->undo (stack) */
-	tmp = gsstack_to_text( mvhist->undo );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "gsstack_to_text(mvhist->undo) failed!" );
+	if ( !gsstack_append_to_fp(mvhist->undo, fp) ) {
+		DBGF( "%s", "gsstack_append_to_fp(mvhist->undo) failed!" );
 		goto ret_failure;
 	}
-	if ( fprintf(fp, "%s", tmp) < 1 ) {
-		DBGF( "%s", "fprintf() failed!" );
-		goto ret_failure;
-	}
-	free( tmp );
-
+	
 	/* + mvhist->redo (stack) */
-	tmp = gsstack_to_text( mvhist->redo );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "gsstack_to_text(mvhist->redo) failed!" );
+	if ( !gsstack_append_to_fp(mvhist->redo, fp) ) {
+		DBGF( "%s", "gsstack_append_to_fp(mvhist->redo) failed!" );
 		goto ret_failure;
 	}
-	if ( fprintf(fp, "%s", tmp) < 1 ) {
-		DBGF( "%s", "fprintf() failed!" );
-		goto ret_failure;
-	}
-	free( tmp );
 
 	/* + mvhist->replay */
-	tmp = _replay_to_text( mvhist );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "_replay_to_text() failed!" );
+	if ( !_replay_append_to_fp(mvhist, fp) ) {
+		DBGF( "%s", "_replay_append_to_fp() failed!" );
 		goto ret_failure;
 	}
-	if ( fprintf(fp, "%s", tmp) < 1 ) {
-		DBGF( "%s", "fprintf() failed!" );
-		goto ret_failure;
-	}
-	free( tmp );
 
 	fclose( fp );
 	return 1;  /* true */
 
 ret_failure:
 	fclose( fp );
-	free( tmp );
 	return 0;  /* false */
 }
 

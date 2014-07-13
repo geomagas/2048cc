@@ -364,65 +364,49 @@ int gamestate_set_nextmove( GameState *state, int nextmv )
 }
 
 /* --------------------------------------------------------------
- * char *gamestate_to_text():
+ * int gamestate_append_to_fp():
  *
  * --------------------------------------------------------------
  */
-char *gamestate_to_text( const GameState *state )
+int gamestate_append_to_fp( const GameState *state, FILE *fp )
 {
-	char *txtout = NULL, *test = NULL, *tmp = NULL;
+	if ( NULL == fp ) {
+		DBGF( "%s", "NULL pointer argument (fp)!" );
+		return 0;  /* false */
+	}
 
 	/* a NULL state is printed as "NULL@\n" */
 	if ( NULL == state ) {
-		txtout = printf_to_text( "%s\r\n", "NULL@" );
-		if ( NULL == txtout ) {
-			DBGF( "%s", "printf_to_text() failed!" );
+		if ( fprintf(fp, "%s", "NULL@\r\n") < 7 ) {
+			DBGF( "%s", "fprintf() failed!" );
+			return 0;  /* false */
 		}
-		return txtout;
 	}
 
 	/* state->score + state->bscore + state->iswin
 	 * + state->prevmv + state->nextmv
 	 */
-	test = printf_to_text(
-		"%s%ld %ld %d %d %d@",
-		NULL == txtout ? "\0" : txtout,
+	if ( fprintf(
+		fp, 
+		"%ld %ld %d %d %d@",
 		state->score,
 		state->bscore,
 		state->iswin,
 		state->prevmv,
 		state->nextmv
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
+		) < 0
+	){
+		DBGF( "%s", "fprintf() failed!" );
+		return 0;  /* false */
 	}
-	txtout = test;
 
 	/* + state->board */
-	tmp = board_to_text( state->board );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "board_to_text() failed!" );
-		goto ret_failure;
+	if ( !board_append_to_fp(state->board, fp) ) {
+		DBGF( "%s", "board_append_to_fp() failed!" );
+		return 0;  /* false */
 	}
-	test = printf_to_text(
-		"%s%s",
-		NULL == txtout ? "\0" : txtout,
-		tmp
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
-	}
-	txtout = test;
-	free( tmp );
 
-	return txtout;
-
-ret_failure:
-	free( tmp );
-	free( txtout );
-	return NULL;
+	return 1;
 }
 
 /* --------------------------------------------------------------
@@ -728,61 +712,39 @@ GSNode *gsstack_free( GSNode **stack )
  *
  * --------------------------------------------------------------
  */
-char *gsstack_to_text( const GSNode *stack )
+int gsstack_append_to_fp( const GSNode *stack, FILE *fp )
 {
-	char *txtout = NULL, *test = NULL, *tmp = NULL;
+	if  ( NULL == fp ) {
+		DBGF( "%s", "NULL pointer argument (fp)" );
+		return 0;  /* false */
+	}
 
 	/* a NULL stack is printed as "NULL:\n" */
 	if ( NULL == stack ) {
-		txtout = printf_to_text( "%s\r\n", "NULL:" );
-		if ( NULL == txtout ) {
-			DBGF( "%s", "printf_to_text() failed!" );
+		if ( fprintf(fp, "%s", "NULL:\r\n" ) != 7  ) {
+			DBGF( "%s", "fprintf() failed!" );
+			return 0;  /* false */
 		}
-		return txtout;
 	}
-
 
 	while ( NULL != stack )
 	{
 		/* node's count */
-		test = printf_to_text(
-			"%s%ld:",
-			NULL == txtout ? "\0" : txtout,
-			stack->count
-			);
-		if ( NULL == test ) {
-			DBGF( "%s", "printf_to_text() failed!" );
-			goto ret_failure;
+		if ( fprintf(fp, "%ld:", stack->count) < 0 ) {
+			DBGF( "%s", "fprintf() failed!" );
+			return 0;  /* false */
 		}
-		txtout = test;
 
 		/* + node's state */
-		tmp = gamestate_to_text( stack->state );
-		if ( NULL == tmp ) {
-			DBGF( "%s", "gamestate_to_text() failed!" );
-			goto ret_failure;
+		if ( !gamestate_append_to_fp(stack->state, fp) ) {
+			DBGF( "%s", "gamestate_append_to_fp() failed!" );
+			return 0;  /* false */
 		}
-		test = printf_to_text(
-			"%s%s",
-			NULL == txtout ? "\0" : txtout,
-			tmp
-			);
-		if ( NULL == test ) {
-			DBGF( "%s", "printf_to_text() failed!" );
-			goto ret_failure;
-		}
-		txtout = test;
-		free( tmp );
 
 		stack = stack->down;
 	}
 
-	return txtout;
-
-ret_failure:
-	free( tmp );
-	free( txtout );
-	return NULL;
+	return 1;  /* true */
 }
 
 /* --------------------------------------------------------------

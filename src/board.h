@@ -48,7 +48,7 @@ extern int   board_get_nrandom( const Board *board );
 extern int   board_get_tile_value( const Board *board, int i, int j );
 extern int   board_get_nempty( const Board *board );
 
-extern char  *board_to_text( const Board *board );
+extern int    board_append_to_fp( const Board *board, FILE *fp );
 extern Board *new_board_from_text( char *text );
 
 extern int   dbg_board_dump( const Board *board );

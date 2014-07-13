@@ -317,12 +317,12 @@ char *s_strip( char *s, const char *del )
  */
 char *s_fixeol( char *s  )
 {
-#if defined( CC2048_OS_WINDOWS )
 	if ( NULL == s ) {
 		DBGF( "%s", "NULL pointer argument!" );
 		return s;
 	}
 
+#if defined( CC2048_OS_WINDOWS )
 	if ( NULL == strstr(s, "\r\n") ) {
 		return s_char_replace( s, '\r', '\n' );
 	}
