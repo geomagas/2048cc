@@ -14,15 +14,15 @@
 #define MY_H
 
 /* Determine compilation OS */
-#if defined(__unix__) || defined(__unix) || defined(unix)        \
+#if defined(__linux__) || defined(__linux) || defined(linux)   \
+|| defined(__gnu_linux__)
+	#define MY_OS_LINUX
+
+#elif defined(__unix__) || defined(__unix) || defined(unix)      \
 || defined(__CYGWIN__)                                           \
 || ( defined(__APPLE__) && defined(__MACH__) )                   \
 || ( defined(__APPLE__) && defined(__MACH) )
 	#define MY_OS_UNIX
-
-#elif defined(__linux__) || defined(__linux) || defined(linux)   \
-|| defined(__gnu_linux__)
-	#define MY_OS_LINUX
 
 #elif defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__) \
 || defined(__TOS_WIN__)
@@ -98,7 +98,7 @@ enum {	/* unbufferd i/o related constants & masks */
 #ifndef MY_C
 extern int my_cursor_onoff( int onoff );
 extern int my_getch( unsigned int *outKeyMask );
-extern int my_sleep_msecs( unsigned int msecs );
+extern int my_sleep_msecs( unsigned long int msecs );
 extern int my_cls( void );
 extern int my_console_width( void );
 extern int my_console_height( void );

@@ -226,8 +226,9 @@ int my_getch( unsigned int *outKeyMask )
 	/* we want to keep the old setting to restore them at the end */
 	newt = oldt;
 
-	/* ? */
+	/* Input must have at least this number of chars for read to return */
 	newt.c_cc[ VMIN  ] = MY_MAGIC_MAX_CHARS;
+	/* Time in 0.1 seconds after first char to wait before returning */
 	newt.c_cc[ VTIME ] = 1;
 	newt.c_iflag &= ~(IXOFF);
 
