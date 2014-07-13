@@ -1270,69 +1270,68 @@ int board_get_tile_value( const Board *board, int i, int j )
 
 
 /* --------------------------------------------------------------
- * char *_grid_to_text():
+ * int _grid_append_to_fp():
  *
  * --------------------------------------------------------------
  */
-static inline char *_grid_to_text( const struct _tile *grid, int dim )
+static inline int _grid_append_to_fp(
+	const struct _tile *grid,
+	int  dim,
+	FILE *fp
+	)
 {
 	int i, len;
-	char *txtout = NULL, *test = NULL;
 
-	/* a NULL grid is printed as "NULL\n" */
+	if ( NULL == fp ) {
+		DBGF( "%s", "NULL pointer argument (fp)!" );
+		return 0;  /* false */
+	}
+
+	/* a NULL grid is printed as "NULL\r\n" */
 	if ( NULL == grid ) {
-		txtout = printf_to_text( "%s\r\n", "NULL" );
-		if ( NULL == txtout ) {
-			DBGF( "%s", "printf_to_text() failed!" );
+		if ( fprintf(fp, "%s", "NULL\r\n") < 7 ) {
+			DBGF( "%s", "fprintf() failed!" );
+			return 0;  /* false */
 		}
-		return txtout;
+		return 1;  /* true */
 	}
 
 	len = dim * dim;
 	for (i=0; i < len; i++)
 	{
-		test = printf_to_text(
-			"%s%d ",
-			NULL == txtout ? "\0" : txtout,
-			grid[i].val
-			);
-		if ( NULL == test ) {
-			DBGF( "%s", "printf_to_text() failed!" );
-			goto ret_failure;
+		if ( fprintf(fp, "%d ", grid[i].val) < 0 ) {
+			DBGF( "%s", "fprintf(grid[i].val) failed!" );
+			return 0;  /* false */
 		}
-		txtout = test;
 	}
 
-	test = printf_to_text( "%s\r\n", NULL == txtout ? "\0" : txtout );
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
+	if ( fprintf(fp, "%s", "\r\n") < 2 ) {
+		DBGF( "%s", "fprintf(\"\r\n\") failed!" );
+		return 0;  /* false */
 	}
-	txtout = test;
 
-	return txtout;
-
-ret_failure:
-	free( txtout );
-	return NULL;
+	return 1;  /* true */
 }
 
 /* --------------------------------------------------------------
- * char *board_to_text():
+ * int board_append_to_fp():
  *
  * --------------------------------------------------------------
  */
-char *board_to_text( const Board *board )
+int board_append_to_fp( const Board *board, FILE *fp )
 {
-	char *txtout = NULL, *test = NULL, *tmp = NULL;
+	if ( NULL == fp ) {
+		DBGF( "%s", "NULL pointer argument (fp)" );
+		return 0;  /* false */
+	}
 
-	/* a NULL board is printed as "NULL#\n" */
+	/* a NULL board is printed as "NULL#\r\n" */
 	if ( NULL == board ) {
-		txtout = printf_to_text( "%s\n", "NULL#" );
-		if ( NULL == txtout ) {
-			DBGF( "%s", "printf_to_text() failed!" );
+		if ( fprintf(fp, "%s", "NULL#\r\n") < 7 ) {
+			DBGF( "%s", "fprintf() failed!" );
+			return 0;  /* false */
 		}
-		return txtout;
+		return 1;  /* false */
 	}
 
 	/* board->dim
@@ -1341,45 +1340,27 @@ char *board_to_text( const Board *board )
 	 * + board->nempty
 	 * + board->hasadjacent
 	 */
-	test = printf_to_text(
-		"%s%d %d %d %d %d#",
-		NULL == txtout ? "\0" : txtout,
+	if ( fprintf(
+		fp,
+		"%d %d %d %d %d#",
 		board->dim,
 		board->sentinel,
 		board->nrandom,
 		board->nempty,
 		board_has_adjacent(board)
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
+		) < 0
+	){
+		DBGF( "%s", "fprintf() failed!" );
+		return 0;  /* false */
 	}
-	txtout = test;
 
 	/* + board->grid */
-	tmp = _grid_to_text( board->grid, board->dim );
-	if ( NULL == tmp ) {
-		DBGF( "%s", "_grid_to_text() failed!" );
-		goto ret_failure;
+	if ( !_grid_append_to_fp(board->grid, board->dim, fp) ) {
+		DBGF( "%s", "_grid_append_to_fp() failed!" );
+		return 0;  /* false */
 	}
-	test = printf_to_text(
-		"%s%s",
-		NULL == txtout ? "\0" : txtout,
-		tmp
-		);
-	if ( NULL == test ) {
-		DBGF( "%s", "printf_to_text() failed!" );
-		goto ret_failure;
-	}
-	txtout = test;
-	free( tmp );
 
-	return txtout;
-
-ret_failure:
-	free( tmp );
-	free( txtout );
-	return NULL;
+	return 1;  /* true */
 }
 
 /* --------------------------------------------------------------

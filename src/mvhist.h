@@ -99,7 +99,6 @@ extern long int          mvhist_get_replay_itcount(
                                const MovesHistory *mvhist
                                );
 
-extern char              *mvhist_to_text( const MovesHistory *mvhist );
 extern int               mvhist_save_to_file(
                                const MovesHistory *mvhist,
                                const char         *fname

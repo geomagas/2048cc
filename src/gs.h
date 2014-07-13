@@ -50,11 +50,11 @@ extern int        gamestate_set_iswin( GameState *state, int iswin );
 extern int        gamestate_set_prevmove( GameState *state, int prevmv );
 extern int        gamestate_set_nextmove( GameState *state, int nextmv );
 
-extern char       *gamestate_to_text( const GameState *state );
+extern int        gamestate_append_to_fp( const GameState *state, FILE *fp );
 extern GameState  *new_gamestate_from_text( char *text );
 
 
-/* gamestate-stack interface */
+/* gsstack interface */
 
 extern int             gsstack_push( GSNode **stack, const GameState *state );
 extern const GSNode    *gsstack_peek( const GSNode *stack );
@@ -69,7 +69,7 @@ extern const GSNode    *gsstack_iter_bottom( const GSNode *stack );
 extern const GSNode    *gsstack_iter_down( const GSNode *it );
 extern const GSNode    *gsstack_iter_up( const GSNode *it );
 
-extern char            *gsstack_to_text( const GSNode *stack );
+extern int             gsstack_append_to_fp( const GSNode *stack, FILE *fp );
 extern GSNode          *new_gsnode_from_text( char *text );
 
 extern void            dbg_gsnode_dump( GSNode *node );
