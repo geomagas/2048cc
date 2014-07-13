@@ -17,3 +17,6 @@ Makefile text
 *.vcxproj text eol=crlf
 *.vcproj.filters text eol=crlf
 *.vcxproj.filters text eol=crlf
+
+# Replay files should always have CRLF
+replays/*.sav text eol=crlf
