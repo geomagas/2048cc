@@ -8,6 +8,7 @@
  * Dependencies: common.h, board.h, gs.h
  * --------------------------------------------------------------
  *
+ * Private implementation of the GameState & GSStack "classes".
  ****************************************************************
  */
 
@@ -419,7 +420,7 @@ int gamestate_append_to_fp( const GameState *state, FILE *fp )
 GameState *new_gamestate_from_text( char *text )
 {
 	Board     *board = NULL;      /* temporary board */
-	GameState *state = NULL;      /* new gamestate to be returned */
+	GameState *state = NULL;      /* new game-state to be returned */
 	char *tokens[2] = { NULL };
 	int  ntokens=0, n=0;
 
@@ -437,7 +438,7 @@ GameState *new_gamestate_from_text( char *text )
 
 	/*
 	 * From the 2nd text-token, create a temp board. Then create the
-	 * new gamestate, copy the temp board into it & free the temp board.
+	 * new game-state, copy the temp board into it & free the temp board.
 	 */
 	board = new_board_from_text( tokens[1] );
 	if ( NULL == board ) {
@@ -775,8 +776,8 @@ GSNode *new_gsnode_from_text( char *text )
 
 	/*
 	 * From the 2nd text-token, create a temp gamesstate. Then create
-	 * the new node, copy the temp gamestate into it and free the temp
-	 * gamestate.
+	 * the new node, copy the temp game-state into it and free the temp
+	 * game-state.
 	 */
 	state = new_gamestate_from_text( tokens[1] );
 	if ( NULL == state ) {

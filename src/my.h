@@ -3,10 +3,13 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * --------------------------------------------------------------
  *
+ * Header file exposing a small collection of cross-platform,
+ * utility function and constants, aiming to help implementing
+ * rather primitive text user interfaces on the console/terminal.
  ****************************************************************
  */
 
@@ -14,7 +17,7 @@
 #define MY_H
 
 /* Determine compilation OS */
-#if defined(__linux__) || defined(__linux) || defined(linux)   \
+#if defined(__linux__) || defined(__linux) || defined(linux)     \
 || defined(__gnu_linux__)
 	#define MY_OS_LINUX
 
@@ -56,7 +59,7 @@
  * ------------------
  */
 
-enum {	/* unbufferd i/o related constants & masks */
+enum {	/* unbuffered i/o related constants & masks */
 
 	MY_KEYMASK_RESET   = 0x00,
 	MY_KEYMASK_ARROW   = (1 << 0),	// 0x01

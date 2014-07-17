@@ -3,11 +3,21 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: my.h
  * --------------------------------------------------------------
  *
+ * A small collection of cross-platform, utility functions to help
+ * implementing rather primitive text user interfaces using the
+ * console/terminal.
+ *
+ * Functions with a "_" prefix in their names are meant to be private
+ * in this source-module. They are usually inlined, without performing
+ * any sanity check on their arguments.
+ *
+ * The accompanying header file ("my.h") is also defining some
+ * additional constants.
  ****************************************************************
  */
 
@@ -21,7 +31,7 @@
 #include "my.h"
 
 /* --------------------------------------------------------------
- * 
+ * Enable raw mode
  * --------------------------------------------------------------
  */
 static int _my_raw_on( void )
@@ -63,7 +73,7 @@ static int _my_raw_on( void )
 }
 
 /* --------------------------------------------------------------
- * 
+ * Disable raw mode
  * --------------------------------------------------------------
  */
 static int _my_raw_off( void )
@@ -105,7 +115,7 @@ static int _my_raw_off( void )
 }
 
 /* --------------------------------------------------------------
- * 
+ * Enable echo when inputting
  * --------------------------------------------------------------
  */
 static int _my_echo_on( void )
@@ -146,7 +156,7 @@ static int _my_echo_on( void )
 }
 
 /* --------------------------------------------------------------
- * 
+ * Disable echo when inputting
  * --------------------------------------------------------------
  */
 static int _my_echo_off( void )
@@ -187,7 +197,23 @@ static int _my_echo_off( void )
 }
 
 /* --------------------------------------------------------------
- * 
+ * int my_getch():
+ *
+ * Get an unbuffered key-press from stdin, and return it as an
+ * ASCII-code. If the key-press involved special keys, such as
+ * arrow-keys or function-keys, then the (outKeyMask) argument
+ * is set accordingly (otherwise it is zeroed out).
+ *
+ * NOTE: The return value of this function is identical to the
+ *       ASCII-code returned by the function: getch() which is
+ *       available with Windows compilers, via <conio.h>.
+ *
+ *       For compilers on other platforms, termios is used for
+ *       reading the key-press. The latter is then converted to
+ *       its corresponding ASCII-code before it is returned.
+ *
+ *       The ASCII-codes are abstracted with enumerated values,
+ *       defined in the file: "my.h".
  * --------------------------------------------------------------
  */
 int my_getch( unsigned int *outKeyMask )
@@ -223,7 +249,7 @@ int my_getch( unsigned int *outKeyMask )
 	/* get the terminal settings for stdin */
 	tcgetattr( STDIN_FILENO, &oldt );
 
-	/* we want to keep the old setting to restore them at the end */
+	/* we want to keep the old settings, to restore them at the end */
 	newt = oldt;
 
 	/* Input must have at least this number of chars for read to return */
@@ -285,11 +311,15 @@ int my_getch( unsigned int *outKeyMask )
 		}
 
 		/* home & end keys */
-		else if (0 == memcmp(&keycodes[1], "OH", count-1) ) {
+		else if (0 == memcmp(&keycodes[1], "OH", count-1)
+		|| 0 == memcmp(&keycodes[1], "[1~", count-1)
+		){
 			*outKeyMask |= MY_KEYMASK_ARROW;
 			key = MY_KEY_HOME;
 		}
-		else if (0 == memcmp(&keycodes[1], "OF", count-1) ) {
+		else if (0 == memcmp(&keycodes[1], "OF", count-1) )
+		|| 0 == memcmp(&keycodes[1], "[4~", count-1)
+		){
 			*outKeyMask |= MY_KEYMASK_ARROW;
 			key = MY_KEY_END;
 		}
@@ -305,19 +335,27 @@ int my_getch( unsigned int *outKeyMask )
 		}
 
 		/* FKEYS */
-		else if (0 == memcmp(&keycodes[1], "OP", count-1) ) {
+		else if (0 == memcmp(&keycodes[1], "OP", count-1)
+		|| 0 == memcmp(&keycodes[1], "[11~", count-1)
+		){
 			*outKeyMask |= MY_KEYMASK_FKEY;
 			key = MY_KEY_F1;
 		}
-		else if (0 == memcmp(&keycodes[1], "OQ", count-1) ) {
+		else if (0 == memcmp(&keycodes[1], "OQ", count-1)
+		|| 0 == memcmp(&keycodes[1], "[12~", count-1)
+		){
 			*outKeyMask |= MY_KEYMASK_FKEY;
 			key = MY_KEY_F2;
 		}
-		else if (0 == memcmp(&keycodes[1], "OR", count-1) ) {
+		else if (0 == memcmp(&keycodes[1], "OR", count-1)
+		|| 0 == memcmp(&keycodes[1], "[13~", count-1)
+		){
 			*outKeyMask |= MY_KEYMASK_FKEY;
 			key = MY_KEY_F3;
 		}
-		else if (0 == memcmp(&keycodes[1], "OS", count-1) ) {
+		else if (0 == memcmp(&keycodes[1], "OS", count-1) )
+		|| 0 == memcmp(&keycodes[1], "[14~", count-1)
+		){
 			*outKeyMask |= MY_KEYMASK_FKEY;
 			key = MY_KEY_F4;
 		}
@@ -340,6 +378,14 @@ int my_getch( unsigned int *outKeyMask )
 		else if (0 == memcmp(&keycodes[1], "[20~", count-1) ) {
 			*outKeyMask |= MY_KEYMASK_FKEY;
 			key = MY_KEY_F9;
+		}
+		else if (0 == memcmp(&keycodes[1], "[21~", count-1) ) {
+			*outKeyMask |= MY_KEYMASK_FKEY;
+			key = MY_KEY_F10;
+		}
+		else if (0 == memcmp(&keycodes[1], "[23~", count-1) ) {
+			*outKeyMask |= MY_KEYMASK_FKEY;
+			key = MY_KEY_F11;
 		}
 		else if (0 == memcmp(&keycodes[1], "[24~", count-1) ) {
 			*outKeyMask |= MY_KEYMASK_FKEY;
@@ -365,6 +411,11 @@ int my_getch( unsigned int *outKeyMask )
 
 /* --------------------------------------------------------------
  * Cross-platform sleeping function (in milliseconds).
+ *
+ * NOTE: Some versions of gcc (perhaps other compilers too) need
+ *       the directive _BSD_SOURCE to be predefined, in order to
+ *       successfully link-in the usleep() function. On Windows
+ *       it is NOT needed.
  * --------------------------------------------------------------
  */
 int my_sleep_msecs( unsigned long int msecs )
@@ -531,7 +582,7 @@ int my_console_height( void )
  * Cross-platform function to show or hide the console cursor.
  *
  * It works both on the Windows console and on terminals that
- * support ANSI escape sequences (that is on most Unix/Linux
+ * support ANSI escape sequences (that is, on most Unix/Linux
  * terminals).
  * --------------------------------------------------------------
  */
@@ -670,7 +721,11 @@ int my_gotoxy( int x, int y )
 }
 
 /* --------------------------------------------------------------
- * 
+ * int my_printfxy():
+ *
+ * This function is an enhanced printf(). It expects 2 additional
+ * leading arguments, specifying the x & y coords of the console
+ * screen, at which the output will occur.
  * --------------------------------------------------------------
  */
 int my_printfxy( int x, int y, const char *fmt, ... )

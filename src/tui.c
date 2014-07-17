@@ -3,18 +3,25 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: con_color.h, my.h, common.h, board.h,
  *               gs.h, mvhist.h, tui_skin.h
  * --------------------------------------------------------------
  *
- * Private implementation of a primitive text-user-interface for
- * the game.
+ * Private implementation of the Tui "class".
+ *
+ * The "class" realizes a primitive text-user-interface for the game.
+ * The accompanying header file "tui.h" exposes publicly the "class"
+ * as an opaque data-type.
  *
  * Functions having the "tui_sys_" prefix in their names do NOT operate
  * on tui objects. They are mostly direct wrappers of functions that are
  * implemented in the file: my.c.  
+ *
+ * Functions with a "_" prefix in their names are meant to be private
+ * in this source-module. They are usually inlined, without performing
+ * any sanity check on their arguments.
  *
  * Layout Entities
  * ---------------
@@ -94,7 +101,7 @@ struct _scrlayout {
 };
 
 /* text user interface */
-struct Tui {
+struct _tui {
 	GameState         *state;
 	MovesHistory      *mvhist;
 	struct _scrlayout layout;
@@ -202,10 +209,10 @@ char *_get_replay_fname_from_user( char *fname )
 /* --------------------------------------------------------------
  * int _printfxy():
  *
- * This function is an enhanced printf(). It takes 4 additional
- * arguments at the start of its parameter list, specifying the
- * foreground & background colors (fg, bg) for the output, along
- * with its starting position on the console screen (x,y).
+ * This function is an enhanced printf(). It expects 4 additional
+ * leading arguments, specifying the foreground (fg) & background
+ * (bg) colors for the output, along with its starting position on
+ * the console screen (x,y).
  * --------------------------------------------------------------
  */
 int _printfxy(

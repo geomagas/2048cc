@@ -3,10 +3,13 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * --------------------------------------------------------------
  *
+ * Header file exposing a collection of miscellaneous, utility constants,
+ * macros & functions, mostly dealing with c-strings handling (including
+ * filenames and debugging info).
  ****************************************************************
  */
 #ifndef COMMON_H
