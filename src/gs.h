@@ -3,11 +3,13 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: board.h
  * --------------------------------------------------------------
  *
+ * The public interfaces of the GameState and GSNode(gsstack) "classes".
+ * For details, see the file: gs.c
  ****************************************************************
  */
 
@@ -16,10 +18,13 @@
 
 #include "board.h"
 
+/* The GameState & GSNode "classes" are
+ * forward-declared as opaque data-types
+ */
 typedef struct _GameState GameState;
 typedef struct _GSNode    GSNode;
 
-enum {  /* GameState direction of previous-move */
+enum {  /* GameState direction of next & previous moves */
 	GS_MVDIR_NONE = 0,
 	GS_MVDIR_UP,
 	GS_MVDIR_DOWN,
@@ -58,7 +63,6 @@ extern GameState  *new_gamestate_from_text( char *text );
 /* gsstack interface */
 
 extern int             gsstack_push( GSNode **stack, const GameState *state );
-extern const GSNode    *gsstack_peek( const GSNode *stack );
 extern long int        gsstack_peek_count( const GSNode *stack );
 extern const GameState *gsstack_peek_state( const GSNode *stack );
 extern int             gsstack_pop( GSNode **stack );

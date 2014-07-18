@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see following comments for limitations)
  * Dependencies: common.h, board.h, gs.h, mvhist.h, tui.h
  * --------------------------------------------------------------

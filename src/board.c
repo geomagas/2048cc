@@ -750,7 +750,7 @@ static inline void _init( Board *board )
 /* --------------------------------------------------------------
  * Board *make_board():
  *
- * Reserve memory for a new board object, having a grid of the
+ * Instantiate a new board object in memory, having a grid of the
  * specified single-dimension and return a pointer to it, or NULL
  * on error.
  *
@@ -787,11 +787,11 @@ Board *make_board( int dim )
 /* --------------------------------------------------------------
  * Board *new_board():
  *
- * The board constructor reserves memory for a new board object,
+ * The board constructor instantiates a new board object in memory,
  * initializes it to default values and returns a pointer to it,
  * or NULL on error.
  *
- * NOTE: All new board objects are initialized with a 4x4 grid.
+ * NOTE: All new Board objects are initialized with a 4x4 grid.
  * --------------------------------------------------------------
  */
 Board *new_board( void )
@@ -827,8 +827,8 @@ Board *board_free( Board *board )
 /* --------------------------------------------------------------
  * int board_reset():
  *
- * Reset the board for a new game. Return 0 (false) on error,
- * 1 (true) otherwise.
+ * Reset the specified board object for a new game. Return 0 (false)
+ * on error, 1 (true) otherwise.
  *
  * NOTE: Resetting the board does NOT change the following fields:
  *       - board->dim
@@ -907,8 +907,8 @@ int board_resize_and_reset( Board *board, int dim )
 /* --------------------------------------------------------------
  * int board_copy():
  *
- * Copy the specified source board (src) into the specified
- * destination board (dst). Return 0 (false) on error, 1 (true)
+ * Copy the specified source board object (src) into the specified
+ * destination board object (dst). Return 0 (false) on error, 1 (true)
  * otherwise.
  *
  * NOTES: If the grid dimensions of the boards differ, then

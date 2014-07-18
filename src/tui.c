@@ -357,6 +357,7 @@ static int _int_count_digits( int num )
  * Depending on the specified tile-value (val), query the skin of
  * the specified tui for the corresponding foreground & background
  * colors, and return them.
+ *
  * These colors are returned in the form of pointer to a ConColors
  * structure, which is available through the con_color.h preprocessor
  * interface.
@@ -404,7 +405,8 @@ static inline const ConColors *_tileval_to_colors( int val, const Tui *tui )
  * int _draw_tileval_at_xy():
  *
  * Draw the specified tile-value at the specified position (x,y)
- * on the console screen. Return 0 on error, 1 otherwise.
+ * on the console screen. Return 0 (false) on error, 1 (true)
+ * otherwise.
  *
  * NOTE: Used exclusively in the function tui_draw_board(),
  *       so it depends heavily on assumptions made in that
@@ -442,7 +444,9 @@ static inline int _draw_tileval_at_xy(
 }
 
 /* --------------------------------------------------------------
- * 
+ * void _clear_iobar():
+ *
+ * Clear the 1st io-bar of the specified tui object.
  * --------------------------------------------------------------
  */
 static void _clear_iobar( const Tui *tui )
@@ -459,7 +463,9 @@ static void _clear_iobar( const Tui *tui )
 }
 
 /* --------------------------------------------------------------
- * 
+ * void _clear_iobar2():
+ *
+ * Clear the 2nd io-bar of the specified tui object.
  * --------------------------------------------------------------
  */
 static void _clear_iobar2( const Tui *tui )
@@ -476,7 +482,10 @@ static void _clear_iobar2( const Tui *tui )
 }
 
 /* --------------------------------------------------------------
+ * void _scrbox_set():
  *
+ * Set the specified starting coords & dimensions (x,y,w,h)
+ * of the specified screen-box object (box).
  * --------------------------------------------------------------
  */
 static void _scrbox_set( struct _scrbox *box, int x, int y, int w, int h )
@@ -488,7 +497,28 @@ static void _scrbox_set( struct _scrbox *box, int x, int y, int w, int h )
 }
 
 /* --------------------------------------------------------------
+ * void _scrbox_tile_set_from_dim():
  *
+ * Set the dimensions of the specified screen-box object (tile)
+ * according to the specified single-dimension (dim) of a square
+ * board.
+ *
+ * NOTES: The purpose of this function is to set the drawing width
+ *        and height of any single tile, assuming that it will be
+ *        part of a square board with the specified single-dimension.
+ *
+ *        The values of the assigned width & height are hard-coded,
+ *        so that when all the tiles of the board are drawn on the
+ *        console screen, the board will fit both horizontally and
+ *        vertically to a conceptually predefined area on the screen.
+ *
+ *        This conceptually predefined area has been determined by
+ *        trial & error observations during game-play, until the 
+ *        hard-coded tile dimensions gave the desired visual result.
+ *
+ *        The functions is exclusively used by the func: _init_layout()
+ *        which is in turn used for initializing all the screen-layout
+ *        entities of the tui.
  * --------------------------------------------------------------
  */
 static void _scrbox_tile_set_from_dim( struct _scrbox *box, int dim )
@@ -1896,6 +1926,7 @@ void tui_redraw( const Tui *tui, int isenabledcommands )
 /* --------------------------------------------------------------
  * int tui_cycle_skin():
  *
+ * Apply to the specified tui object, the next available skin.
  * --------------------------------------------------------------
  */
 int tui_cycle_skin( Tui *tui )
