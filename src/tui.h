@@ -3,12 +3,14 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: my.h, board.h, gs.h, mvhist.h
  * --------------------------------------------------------------
  *
- * The public interface for the text-user-interface of the game.
+ * The public interface of the Tui "class".
+ *
+ * The "class" realizes the text-user-interface of the game.
  * It is meant to be used by main.c, hiding the details of the
  * internal implementation and the dependencies.
  ****************************************************************
@@ -22,9 +24,10 @@
 #include "gs.h"
 #include "mvhist.h"
 
-typedef struct Tui Tui;
+/* The "class" is forward-declared as an opaque data-type */
+typedef struct _tui Tui;
 
-/* input keys to be handled */
+/* Input keys handled by the "class" */
 enum {
 	TUI_KEYMASK_RESET     = MY_KEYMASK_RESET,
 	TUI_KEYMASK_ARROW     = MY_KEYMASK_ARROW,

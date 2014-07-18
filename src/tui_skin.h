@@ -3,13 +3,15 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: con_color.h
  * --------------------------------------------------------------
  *
- * The public interface of colorized skins for the text user
- * interface used in the game. It is meant to be used by tui.c
+ * The public interface of the TuiSkin "class".
+ *
+ * The "class" realizes colorized skins for the primitive text
+ * user interface used in the game. It is meant to be used by tui.c
  ****************************************************************
  */
 
@@ -18,6 +20,7 @@
 
 #include "con_color.h"
 
+/* The "class" is forward-declared as an opaque data-type */
 typedef struct _tuiskin TuiSkin;
 
 #ifndef TUI_SKIN_C
@@ -53,7 +56,7 @@ extern const ConColors *tui_skin_get_colors_infobar( const TuiSkin *skin );
 extern const ConColors *tui_skin_get_colors_help_box( const TuiSkin *skin );
 extern const ConColors *tui_skin_get_colors_help_header( const TuiSkin *skin );
 extern const ConColors *tui_skin_get_colors_help_footer( const TuiSkin *skin );
-extern const ConColors *tui_skin_get_colors_help_commands( const TuiSkin *skin );
+extern const ConColors *tui_skin_get_colors_help_commands(const TuiSkin *skin);
 extern const ConColors *tui_skin_get_colors_help_commands_disabled(
                                const TuiSkin *skin
                                );

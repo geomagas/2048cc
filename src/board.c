@@ -3,11 +3,30 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, board.h
  * --------------------------------------------------------------
  *
+ * Private implementation of the Board "class". The accompanying header
+ * file "board.h" exposes publicly the "class" as an opaque data-type.
+ *
+ * Functions with a "_" prefix in their names are meant to be private
+ * in this source-module. They are usually inlined, without performing
+ * any sanity check on their arguments.
+ *
+ * A board consists of the grid (a re-sizable 1D array of tiles that
+ * actually describes a square grid) and a bunch of meta-data. For
+ * details see the definition of struct _board, further below.
+ *
+ * Currently, the single-dimension (dim) of the square grid is also
+ * used for determining the values of other meta-data, such as the
+ * sentinel value (sentinel) of the winning-tile, and the count of
+ * tiles to be generated randomly after every successful move (nrandom).
+ *
+ * The grid dimension is actually used for determining the desired
+ * variant of the game (currently supported variants include 4x4,
+ * 5x5, 6x6 and 8x8 boards).
  ****************************************************************
  */
 
@@ -32,6 +51,8 @@
 	|| (dim) == BOARD_DIM_6  \
 	|| (dim) == BOARD_DIM_8  \
 )
+
+/* The winning-tile Sentinel Value differs depending on the size of the board*/
 enum {
 	_VAL_SENTINEL_4 = 2048,  /* for 4x4 board (default) */
 	_VAL_SENTINEL_5 = 65536, /* for 5x5 board */
@@ -57,7 +78,7 @@ struct _tile {
 	int val;             /* the value of the tile */
 };
 
-typedef struct _board Board;
+/* The board consists of a square grid of tiles and meta-data */
 struct _board {
 	int  dim;            /* single dimension (grid is a square) */
 	int  sentinel;       /* sentinel value (e.g. for 4x4 it is 2048) */
@@ -695,6 +716,8 @@ static inline int _has_adjacent( const Board *board )
 /* --------------------------------------------------------------
  * struct _tile *_grid_resize():
  *
+ * Resize the specified grid to the specified dimensions and
+ * and return a pointer to it, or NULL on error.
  * --------------------------------------------------------------
  */
 static inline struct _tile *_grid_resize( struct _tile *grid, int dim )
@@ -727,6 +750,13 @@ static inline void _init( Board *board )
 /* --------------------------------------------------------------
  * Board *make_board():
  *
+ * Reserve memory for a new board object, having a grid of the
+ * specified single-dimension and return a pointer to it, or NULL
+ * on error.
+ *
+ * NOTE: This function is similar to the constructor: new_board()
+ *       but this one does NOT initialize the board, and also it
+ *       takes the grid dimension as an argument.
  * --------------------------------------------------------------
  */
 Board *make_board( int dim )
@@ -797,7 +827,9 @@ Board *board_free( Board *board )
 /* --------------------------------------------------------------
  * int board_reset():
  *
- * Reset the board for a new game. Return 0 on error, 1 otherwise.
+ * Reset the board for a new game. Return 0 (false) on error,
+ * 1 (true) otherwise.
+ *
  * NOTE: Resetting the board does NOT change the following fields:
  *       - board->dim
  *       - board->sentinel
@@ -875,6 +907,13 @@ int board_resize_and_reset( Board *board, int dim )
 /* --------------------------------------------------------------
  * int board_copy():
  *
+ * Copy the specified source board (src) into the specified
+ * destination board (dst). Return 0 (false) on error, 1 (true)
+ * otherwise.
+ *
+ * NOTES: If the grid dimensions of the boards differ, then
+ *        the grid of the destination board gets resized to
+ *        the dimensions of the source board.
  * --------------------------------------------------------------
  */
 int board_copy( Board *dst, const Board *src )
@@ -1272,6 +1311,15 @@ int board_get_tile_value( const Board *board, int i, int j )
 /* --------------------------------------------------------------
  * int _grid_append_to_fp():
  *
+ * Serialize the specified grid, which MUST be of the specified
+ * single-dimension (dim), and append it to the specified file (fp).
+ * Return 0 (false) on error, 1 (true) otherwise.
+ *
+ * NOTES: The serialization produces a text sequence of all the
+ *        tile-values in the grid, separated by a blank-space and
+ *        ending with a "\r\n" EOL designator.
+ *
+ *        The function is currently used only in: board_append_to_fp()
  * --------------------------------------------------------------
  */
 static inline int _grid_append_to_fp(
@@ -1296,6 +1344,7 @@ static inline int _grid_append_to_fp(
 		return 1;  /* true */
 	}
 
+	/* non-NULL grid */
 	len = dim * dim;
 	for (i=0; i < len; i++)
 	{
@@ -1316,6 +1365,14 @@ static inline int _grid_append_to_fp(
 /* --------------------------------------------------------------
  * int board_append_to_fp():
  *
+ * Serialize the specified board object, and append it to the
+ * specified file (fp). Return 0 (false) on error, 1 (true)
+ * otherwise.
+ *
+ * NOTES: The serialization produces a text line of the form:
+ *        "dim sentinel nrandom nempty hasadjacent#tile-values\r\n"
+ *
+ *        See also the function: _grid_append_to_fp()
  * --------------------------------------------------------------
  */
 int board_append_to_fp( const Board *board, FILE *fp )
@@ -1366,8 +1423,12 @@ int board_append_to_fp( const Board *board, FILE *fp )
 /* --------------------------------------------------------------
  * Board *new_board_from_text():
  *
- * NOTES: The expected format of the text is the following:
- *        "dim sentinel nrandom nempty hasadjacent#tile-values"
+ * De-serialize the specified text and load it in a newly created
+ * board object. Return a pointer to the new object, or NULL on
+ * error.
+ *
+ * NOTES: Text is expected to be already serialized as following:
+ *        "dim sentinel nrandom nempty hasadjacent#tile-values\r\n"
  * --------------------------------------------------------------
  */
 Board *new_board_from_text( char *text )

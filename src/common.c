@@ -3,11 +3,17 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h
  * --------------------------------------------------------------
  *
+ * A collection of miscellaneous, utility functions dealing mostly
+ * with c-strings handling (including filenames).
+ *
+ * The accompanying header file ("common.h") is also defining some
+ * additional constants & macros related to c-strings and debugging
+ * info.
  ****************************************************************
  */
 
@@ -33,8 +39,7 @@
  *      (by the va_start macro, and possibly subsequent va_arg
  *      calls).
  *   2. The returned buffer, if non-NULL, MUST be freed in the
- *      calling environment.
- *   3. The function is currently used only in: _printfxy()
+ *      calling environment
  * --------------------------------------------------------------
  */
 char *vprintf_to_text( const char *fmt, va_list vargs )
@@ -128,7 +133,7 @@ int f_exists( const char *fname )
  *	- flushes any extra chars from stdin
  * --------------------------------------------------------------
  */
-char *s_getflushed( char *s, size_t ssize )
+char *s_getflushed( char *s, size_t size )
 {
 	int c;
 	size_t i;
@@ -138,17 +143,17 @@ char *s_getflushed( char *s, size_t ssize )
 		DBGF( "%s", "NULL pointer argument!" );
 		return NULL;
 	}
-	if ( ssize < 1 ) {
-		DBGF( "Invalid size (%zd)!", ssize );
+	if ( size < 1 ) {
+		DBGF( "Invalid size (%zd)!", size );
 		return NULL;
 	}
 
 	/* read chars from stdin */
-	for (i=0; i < ssize-1 && '\n' != (c=getchar()) && EOF != c; i++) {
+	for (i=0; i < size-1 && '\n' != (c=getchar()) && EOF != c; i++) {
 		s[i] = c;
 	}
 
-	if ( s[i] && s[i] != '\n' ) {         /* ssize reached without '\n' ?*/
+	if ( s[i] && s[i] != '\n' ) {         /* size reached without '\n' */
 		while ( getchar() != '\n' ) { /* flush any remaining chars */
 			/* void */ ;
 		}
@@ -161,8 +166,10 @@ char *s_getflushed( char *s, size_t ssize )
 /* --------------------------------------------------------------
  * int s_tokenize():
  *
- * Tokenize a c-string, up to ntoks tokens.
- * Return the number of tokens which s was broken to, or 0 on error.
+ * Tokenize the c-string (s) to up to (ntoks) tokens, using any char
+ * contained in the c-string (delims) as delimiters. Store the tokens
+ * in the c-stings array (tokens) and return the number of tokens (s)
+ * was broken to, or 0 on error.
  * --------------------------------------------------------------
  */
 int s_tokenize( char *s, char *tokens[], int ntoks, const char *delims )
@@ -309,10 +316,13 @@ char *s_strip( char *s, const char *del )
  * c-string s (in case of error, it will be unchanged).
  *
  * NOTES (IMPORTANT!):
- *        On Windows eol is "\r\n", on Unix & Linux it is "\n",
- *        and on MacOSX it is "\r". The c-string (s) passed in
- *        the function, is expected to follow the Windows format,
- *        that is using "\r\n" for eol.
+ *        On Windows, the eol convention is "\r\n". On Unix & Linux
+ *        it is '\n', and on MacOSX it is '\r'.
+ *
+ *        The c-string (s) passed in the function, is expected to
+ *        follow the Windows convention, but on Windows platforms
+ *        the function will work even if (s) is using any of the
+ *        other two conventions.
  * --------------------------------------------------------------
  */
 char *s_fixeol( char *s  )

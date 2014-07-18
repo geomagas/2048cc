@@ -3,13 +3,20 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: con_color.h, common.h
  * --------------------------------------------------------------
  *
- * Private implementation of colorized skins for the text user
- * interface used in the game.
+ * Private implementation of the TuiSkin "class".
+ *
+ * The "class" realizes colorized skins for the text user interface used
+ * in the game. The accompanying header file "tui_skin.h" exposes publicly
+ * the "class" as an opaque data-type.
+ *
+ * Functions with a "_" prefix in their names are meant to be private
+ * in this source-module. They are usually inlined, without performing
+ * any sanity check on their arguments.
  *
  * Skin Entities
  * -------------

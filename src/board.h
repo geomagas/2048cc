@@ -3,17 +3,21 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * --------------------------------------------------------------
  *
+ * The public interface of the Board "class". 
  ****************************************************************
  */
 
 #ifndef BOARD_H
 #define BOARD_H
 
-/* supported singe-dimensions for the game board */
+/* The "class" is forward-declared as an opaque data-type */
+typedef struct _board Board;
+
+/* Supported singe-dimensions for the game board. */
 enum {
 	BOARD_DIM_4 = 4,    /* 4x4 board (default) */
 	BOARD_DIM_5 = 5,    /* 5x5 board */
@@ -21,10 +25,7 @@ enum {
 	BOARD_DIM_8 = 8     /* 8x8 board */
 };
 
-
 #ifndef BOARD_C
-typedef struct _board Board;  /* forward declaration of opaque data type */
-
 extern Board *make_board( int dim );
 extern Board *new_board( void );
 extern Board *board_free( Board *board );

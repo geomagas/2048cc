@@ -5,6 +5,7 @@
  * Version:      0.3a3
  * Date:         July 11, 2014
  * License:      Free Software (see comments in main.c for limitations)
+ * Dependencies: board.h
  * --------------------------------------------------------------
  *
  ****************************************************************
