@@ -9,7 +9,7 @@
  * --------------------------------------------------------------
  *
  * A small collection of cross-platform, utility functions to help
- * implementing rather primitive text user interfaces using the
+ * implementing a rather primitive text user interfaces using the
  * console/terminal.
  *
  * Functions with a "_" prefix in their names are meant to be private
@@ -317,7 +317,7 @@ int my_getch( unsigned int *outKeyMask )
 			*outKeyMask |= MY_KEYMASK_ARROW;
 			key = MY_KEY_HOME;
 		}
-		else if (0 == memcmp(&keycodes[1], "OF", count-1) )
+		else if (0 == memcmp(&keycodes[1], "OF", count-1)
 		|| 0 == memcmp(&keycodes[1], "[4~", count-1)
 		){
 			*outKeyMask |= MY_KEYMASK_ARROW;
@@ -353,7 +353,7 @@ int my_getch( unsigned int *outKeyMask )
 			*outKeyMask |= MY_KEYMASK_FKEY;
 			key = MY_KEY_F3;
 		}
-		else if (0 == memcmp(&keycodes[1], "OS", count-1) )
+		else if (0 == memcmp(&keycodes[1], "OS", count-1)
 		|| 0 == memcmp(&keycodes[1], "[14~", count-1)
 		){
 			*outKeyMask |= MY_KEYMASK_FKEY;

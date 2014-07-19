@@ -3,15 +3,74 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 18, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, board.h, gs.h
  * --------------------------------------------------------------
  *
- * Private implementation of the GameState & GSStack "classes".
+ * Private implementation of the GameState & GSNode "classes".
+ * The accompanying header file "gs.h" exposes publicly both
+ * "classes" as opaque data-types, along with some additional
+ * constants.
+ *
+ * However, for the GSNode "class", its public interface uses a different
+ * naming-convention for the exposed functions. Their names are prefixed
+ * with "gsstack_" instead of the expected "gsnode_".
+ *
+ * This is BAD-PRACTICE, and should be fixed in future versions of the
+ * code (most probably, a GSStack struct should wrap GSNode, along with
+ * some meta-data, and then used for public exposure instead of GSNode).
+ *
+ * Functions with a "_" prefix in their names are meant to be private
+ * in this source-module. They are usually inlined, without performing
+ * any sanity check on their arguments.
+ *
+ *
+ * The GameState "class"
+ * ---------------------
+ *
+ * The game-state reflects the current state of the game at any given time.
+ * It consists of a a board object along with some meta-data, such as the
+ * current score & best-score, whether a winning-tile has been reached, and
+ * towards what direction was the board played in the previous and/or the
+ * next move (for the latter two, GS_MVDIR_XXXX enumerated values are exposed
+ * publicly, in the header file: "gs.h").
+ *
+ * The main usefulness of the game-state is when the game is played in
+ * normal-mode, but it is also used during replay-mode (because any move
+ * in a replay overwrites the current game-state... this helps us utilizing
+ * the replay-mode also as a load/save game interface).
+ *
+ *
+ * The GSNode(gsstack) "class"
+ * ---------------------------
+ *
+ * gsstacks are currently used by a moves-history object (see: mvhist.c)
+ * for keeping track of game-states during normal game-play and replays.
+ * The moves-history object utilizes 3 stacks: the Undo, the Redo and
+ * the Replay stacks (for details, see the above mentioned file).
+ *
+ * A gsstack links together GSNode nodes, and actually it is implemented
+ * as a doubly linked-list (not a stack) because it makes it simpler to
+ * deal with replays.
+ *
+ * So, a GSNode node consists of its count inside the stack, a game-state
+ * object, and links to the previous and the next node in the stack.
+ *
+ * The usual operations of a stack (push, pop, peek) are implemented
+ * as expected, except that popping removes the top node of the stack
+ * WITHOUT returning its contents (it only returns a boolean value,
+ * indicating whether an error occurred or not). Thus, before popping
+ * a stack, one should peek its contents via any of the corresponding,
+ * publicly exposed functions.
+ *
+ * Another twist, is that any gsstack provides primitive support of
+ * iterators. Without them, it would be a bit too messy to implement
+ * the replay-mode of the game. Look for functions having the prefix
+ * "gsstack_iter_" in their names.
  ****************************************************************
  */
-
+ 
 #define GS_C
 
 #include <stdlib.h>
@@ -24,6 +83,9 @@
 #include "board.h"
 #include "gs.h"
 
+/* Validation macro for game-state's next & previous moves.
+ * They are defined in "gs.h".
+ */
 #define _VALID_MVDIR(dir)           \
 (                                   \
 	(dir) == GS_MVDIR_NONE      \
@@ -33,6 +95,9 @@
 	|| (dir) == GS_MVDIR_RIGHT  \
 )
 
+/* Macro for converting a move-direction to a c-string.
+ * Move-directions are defined in "gs.h".
+ */
 #define _MVDIR_TO_LABEL(dir)                                      \
 (                                                                 \
 	(dir) == GS_MVDIR_UP                                      \
@@ -48,7 +113,7 @@
 						: "ERROR"         \
 )
 
-/* Game-state at any time */
+/* Private definition of the GameState "class" */
 struct _GameState {
 	Board    *board;
 	long int score;        /* current score */
@@ -58,7 +123,9 @@ struct _GameState {
 	int      iswin;        /* has the sentinel value reached? */
 };
 
-/* Single node for game-state stacks */
+/* Private definition of the GSNode "class"
+ * (single node for game-state stacks)
+ */
 struct _GSNode{
 	long int       count;   /* node's count (1-based) */
 	GameState      *state;  /* the game-state stored in the node*/
@@ -67,7 +134,12 @@ struct _GSNode{
 };
 
 /* --------------------------------------------------------------
+ * GameState *new_gamestate():
  *
+ * The game-state constructor instantiates a new game-state object
+ * in memory, creates a square board of the specified single-dimension
+ * for it (dim), initializes the object to default values and returns
+ * a pointer to the new object, or NULL on error.
  * --------------------------------------------------------------
  */
 GameState *new_gamestate( int dim )
@@ -102,7 +174,11 @@ GameState *new_gamestate( int dim )
 }
 
 /* --------------------------------------------------------------
+ * GameState *gamestate_free():
  *
+ * The game-state destructor releases all resources occupied by the
+ * specified game-state object, and it returns NULL (so the caller
+ * may assign it back to the object pointer).
  * --------------------------------------------------------------
  */
 GameState *gamestate_free( GameState *state )
@@ -115,7 +191,11 @@ GameState *gamestate_free( GameState *state )
 }
 
 /* --------------------------------------------------------------
+ * int gamestate_copy():
  *
+ * Copy the specified source game-state object (src) into the
+ * specified destination game-state object (dst). Return 0 (false)
+ * on error, 1 (true) otherwise.
  * --------------------------------------------------------------
  */
 int gamestate_copy( GameState *dst, const GameState *src )
@@ -143,7 +223,12 @@ int gamestate_copy( GameState *dst, const GameState *src )
 }
 
 /* --------------------------------------------------------------
+ * int board_reset():
  *
+ * Reset the specified game-state object (state) for a new game.
+ * Return 0 (false) on error, 1 (true) otherwise.
+ *
+ * NOTE: Resetting a game-state does NOT change its best-score.
  * --------------------------------------------------------------
  */
 int gamestate_reset( GameState *state )
@@ -166,10 +251,13 @@ int gamestate_reset( GameState *state )
 }
 
 /* --------------------------------------------------------------
+ * (Getter) Board *gamestate_get_board():
  *
+ * Return a pointer to the current board object of the specified
+ * game-state object (state) or NULL on error.
  * --------------------------------------------------------------
  */
-Board *gamestate_get_board( const GameState *state )
+const Board *gamestate_get_board( const GameState *state )
 {
 	if ( NULL == state ) {
 		DBGF( "%s", "NULL pointer argument!" );
@@ -180,7 +268,10 @@ Board *gamestate_get_board( const GameState *state )
 }
 
 /* --------------------------------------------------------------
+ * (Getter) long int gamestate_get_score():
  *
+ * Return the current value of the score field, of the specified
+ * game-state object (state), or LONG_MAX on error.
  * --------------------------------------------------------------
  */
 long int gamestate_get_score( const GameState *state )
@@ -193,7 +284,10 @@ long int gamestate_get_score( const GameState *state )
 }
 
 /* --------------------------------------------------------------
+ * (Getter) long int gamestate_get_bestscore():
  *
+ * Return the current value of the best-score field, of the
+ * specified game-state object (state), or LONG_MAX on error.
  * --------------------------------------------------------------
  */
 long int gamestate_get_bestscore( const GameState *state )
@@ -207,21 +301,27 @@ long int gamestate_get_bestscore( const GameState *state )
 }
 
 /* --------------------------------------------------------------
+ * (Getter) int gamestate_get_iswin():
  *
+ * Return the current value of the boolean iswin field, of the
+ * specified game-state object (state), or 0 (false) on error.
  * --------------------------------------------------------------
  */
 int gamestate_get_iswin( const GameState *state )
 {
 	if ( NULL == state ) {
 		DBGF( "%s", "NULL pointer argument!" );
-		return 0;
+		return 0  /* false */;
 	}
 
 	return state->iswin;
 }
 
 /* --------------------------------------------------------------
+ * (Getter) int gamestate_get_prevmove():
  *
+ * Return the current enumerated value of the prevmv field, of the
+ * specified game-state object (state), or GS_MVDIR_NONE on error.
  * --------------------------------------------------------------
  */
 int gamestate_get_prevmove( const GameState *state )
@@ -235,35 +335,73 @@ int gamestate_get_prevmove( const GameState *state )
 }
 
 /* --------------------------------------------------------------
+ * (Getter) const char *gamestate_get_prevmove_label():
  *
+ * Return a pointer to the internal c-string corresponding to the
+ * current enumerated value of the prevmv field, of the specified
+ * game-state object (state), or NULL on error.
+ *
+ * NOTE (IMPORTANT!):
+ *
+ *   The caller should NOT attempt to modify the contents of
+ *   the c-string pointed to by the return value of the function.
  * --------------------------------------------------------------
  */
 const char *gamestate_get_prevmove_label( const GameState *state )
 {
 	if ( NULL == state ) {
 		DBGF( "%s", "NULL pointer argument!" );
-		return GS_MVDIR_NONE;
+		return NULL;
 	}
 
 	return _MVDIR_TO_LABEL( state->prevmv );
 }
 
 /* --------------------------------------------------------------
+ * (Getter) const char *gamestate_get_nextmove_label():
  *
+ * Return a pointer to the internal c-string corresponding to the
+ * current enumerated value of the nextmv field, of the specified
+ * game-state object (state), or NULL on error.
+ *
+ * NOTE (IMPORTANT!):
+ *
+ *   The caller should NOT attempt to modify the contents of
+ *   the c-string pointed to by the return value of the function.
  * --------------------------------------------------------------
  */
 const char *gamestate_get_nextmove_label( const GameState *state )
 {
 	if ( NULL == state ) {
 		DBGF( "%s", "NULL pointer argument!" );
-		return GS_MVDIR_NONE;
+		return NULL;
 	}
 
 	return _MVDIR_TO_LABEL( state->nextmv );
 }
 
 /* --------------------------------------------------------------
+ * (Setter) int gamestate_set_board_reference():
  *
+ * Change the internal pointer that points to the board object
+ * of the specified game-state object (state), so it points to
+ * the board object specified by the 2nd argument of the function.
+ * Return 0 (false) on error, 1 (true) otherwise.
+ *
+ * NOTES (IMPORTANT!):
+ *
+ *    If not properly used, this function may not only LEAK memory
+ *    but it may also cause the game to CRASH.
+ *
+ *    It must be CRYSTAL CLEAR that the function does NOT copy the
+ *    specified board object into the specified game-state. Rather,
+ *    it is brutally changing the internal pointer of the game-state
+ *    board, so it points to the board specified by the 2nd argument.
+ *    No copying, no freeing, no nothing!
+ *
+ *    Currently, the function is used exclusively by the function:
+ *    tui_update_board_reference() which is defined in the file:
+ *    "tui.c".
  * --------------------------------------------------------------
  */
 int gamestate_set_board_reference( GameState *state, Board *board )
@@ -282,7 +420,11 @@ int gamestate_set_board_reference( GameState *state, Board *board )
 }
 
 /* --------------------------------------------------------------
+ * (Setter) int gamestate_set_score():
  *
+ * Set the value of the score field, of the specified game-state
+ * object (state) to the value specified by the 2nd argument (score).
+ * Return 0 (false) on error, 1 (true) otherwise.
  * --------------------------------------------------------------
  */
 int gamestate_set_score( GameState *state, long int score )
@@ -297,7 +439,11 @@ int gamestate_set_score( GameState *state, long int score )
 }
 
 /* --------------------------------------------------------------
+ * (Setter) int gamestate_set_bestscore():
  *
+ * Set the value of the best-score field, of the specified game-state
+ * object (state) to the value specified by the 2nd argument (bscore).
+ * Return 0 (false) on error, 1 (true) otherwise.
  * --------------------------------------------------------------
  */
 int gamestate_set_bestscore( GameState *state, long int bscore )
@@ -312,7 +458,11 @@ int gamestate_set_bestscore( GameState *state, long int bscore )
 }
 
 /* --------------------------------------------------------------
+ * (Setter) int gamestate_set_iswin():
  *
+ * Set the boolean value of the iswin field, of the specified
+ * game-state object (state) to the value specified by the 2nd
+ * argument (iswin). Return 0 (false) on error, 1 (true) otherwise.
  * --------------------------------------------------------------
  */
 int gamestate_set_iswin( GameState *state, int iswin )
@@ -327,7 +477,12 @@ int gamestate_set_iswin( GameState *state, int iswin )
 }
 
 /* --------------------------------------------------------------
+ * (Setter) int gamestate_set_prevmove():
  *
+ * Set the enumerated value of the prevmv field, of the specified
+ * game-state object (state) to the enumerated value specified by
+ * the 2nd argument (prevmv). Return 0 (false) on error, 1 (true)
+ * otherwise.
  * --------------------------------------------------------------
  */
 int gamestate_set_prevmove( GameState *state, int prevmv )
@@ -346,7 +501,12 @@ int gamestate_set_prevmove( GameState *state, int prevmv )
 }
 
 /* --------------------------------------------------------------
+ * (Setter) int gamestate_set_nextmove():
  *
+ * Set the enumerated value of the nextmv field, of the specified
+ * game-state object (state) to the enumerated value specified by
+ * the 2nd argument (nextmv). Return 0 (false) on error, 1 (true)
+ * otherwise.
  * --------------------------------------------------------------
  */
 int gamestate_set_nextmove( GameState *state, int nextmv )
@@ -367,6 +527,17 @@ int gamestate_set_nextmove( GameState *state, int nextmv )
 /* --------------------------------------------------------------
  * int gamestate_append_to_fp():
  *
+ * Serialize the specified game-state object (state) and append
+ * it to the specified file (fp). Return 0 (false) on error, 1
+ * (true) otherwise.
+ *
+ * NOTES:
+ *    The serialization produces a text line of the form:
+ *    "score bscore iswin prevmv nextmv@board-meta-data#board-tile-values\r\n"
+ *
+ *    For details about the serialized board-meta-data and
+ *    board-tile-values, see the function: board_append_to_fp()
+ *    defined in the file: board.c
  * --------------------------------------------------------------
  */
 int gamestate_append_to_fp( const GameState *state, FILE *fp )
@@ -376,7 +547,7 @@ int gamestate_append_to_fp( const GameState *state, FILE *fp )
 		return 0;  /* false */
 	}
 
-	/* a NULL state is printed as "NULL@\n" */
+	/* a NULL state is printed as "NULL@\r\n" */
 	if ( NULL == state ) {
 		if ( fprintf(fp, "%s", "NULL@\r\n") < 7 ) {
 			DBGF( "%s", "fprintf() failed!" );
@@ -413,8 +584,17 @@ int gamestate_append_to_fp( const GameState *state, FILE *fp )
 /* --------------------------------------------------------------
  * GameState *new_gamestate_from_text():
  *
- * NOTES: The expected format of the text is the following:
- *        "score bscore iswin prevmv@board-meta-data#board-tile-values"
+ * De-serialize the specified text and load it in a newly created
+ * game-state object. Return a pointer to the new object, or NULL
+ * on error.
+ *
+ * NOTES:
+ *    Text is expected to be already serialized as following:
+ *    "score bscore iswin prevmv nextmv@board-meta-data#board-tile-values\r\n"
+ *
+ *    For details about the serialized board-meta-data and
+ *    board-tile-values, see the function: board_append_to_fp()
+ *    defined in the file: board.c
  * --------------------------------------------------------------
  */
 GameState *new_gamestate_from_text( char *text )
@@ -482,7 +662,11 @@ ret_failure:
 }
 
 /* --------------------------------------------------------------
+ * GSNode *_make_node():
  *
+ * Reserve memory for a gsstack node, with its state object having
+ * a square board of the specified single-dimension (dim), and
+ * return a pointer to it, or NULL on error.
  * --------------------------------------------------------------
  */
 static inline GSNode *_make_node( int dim )
@@ -504,7 +688,11 @@ static inline GSNode *_make_node( int dim )
 }
 
 /* --------------------------------------------------------------
+ * GSNode *_node_free():
  *
+ * Releases all resources occupied by the specified gsstack node
+ * and return NULL (so the caller may assign it back to the node
+ * pointer).
  * --------------------------------------------------------------
  */
 static inline GSNode *_node_free( GSNode *node )
@@ -518,7 +706,11 @@ static inline GSNode *_node_free( GSNode *node )
 }
 
 /* --------------------------------------------------------------
+ * int gsstack_push():
  *
+ * Push the specified game-state (state) to the top of the
+ * specified gsstack (stack). Return 0 (false) on error,
+ * 1 (true) otherwise.
  * --------------------------------------------------------------
  */
 int gsstack_push( GSNode **stack, const GameState *state )
@@ -559,16 +751,12 @@ int gsstack_push( GSNode **stack, const GameState *state )
 }
 
 /* --------------------------------------------------------------
+ * long int gsstack_peek_count():
  *
- * --------------------------------------------------------------
- */
-const GSNode *gsstack_peek( const GSNode *stack )
-{
-	return stack;
-}
-
-/* --------------------------------------------------------------
+ * Return the value of the count field, of the top node of the
+ * specified gsstack (stack), or 0 on error.
  *
+ * NOTE: The count of nodes in a gsstack is 1-based.
  * --------------------------------------------------------------
  */
 long int gsstack_peek_count( const GSNode *stack )
@@ -581,7 +769,10 @@ long int gsstack_peek_count( const GSNode *stack )
 }
 
 /* --------------------------------------------------------------
+ * const GameState *gsstack_peek_state():
  *
+ * Return a pointer to the game-state object stored at the top
+ * node of the specified gsstack (stack), or NULL on error.
  * --------------------------------------------------------------
  */
 const GameState *gsstack_peek_state( const GSNode *stack )
@@ -594,7 +785,10 @@ const GameState *gsstack_peek_state( const GSNode *stack )
 }
 
 /* --------------------------------------------------------------
+ * int gsstack_pop():
  *
+ * Remove the top node of the specified gsstack (stack).
+ * Return 0 (false) on error, 1 (true) otherwise.
  * --------------------------------------------------------------
  */
 int gsstack_pop( GSNode **stack )
@@ -622,7 +816,11 @@ int gsstack_pop( GSNode **stack )
 }
 
 /* --------------------------------------------------------------
+ * GSNode *gsstack_dup_reversed():
  *
+ * Create a new gsstack which is the reversed duplicate of the
+ * specified gsstack (stack), and return a pointer to the top
+ * node of the new gsstack, or NULL on error.
  * --------------------------------------------------------------
  */
 GSNode *gsstack_dup_reversed( const GSNode *stack )
@@ -644,7 +842,10 @@ GSNode *gsstack_dup_reversed( const GSNode *stack )
 }
 
 /* --------------------------------------------------------------
+ * const GSNode *gsstack_iter_top():
  *
+ * Return a pointer to the top node of the specified gsstack
+ * (stack), or NULL on error.
  * --------------------------------------------------------------
  */
 const GSNode *gsstack_iter_top( const GSNode *stack )
@@ -653,7 +854,10 @@ const GSNode *gsstack_iter_top( const GSNode *stack )
 }
 
 /* --------------------------------------------------------------
+ * const GSNode *gsstack_iter_bottom():
  *
+ * Return a pointer to the bottom node of the specified gsstack
+ * (stack), or NULL on error.
  * --------------------------------------------------------------
  */
 const GSNode *gsstack_iter_bottom( const GSNode *stack )
@@ -669,7 +873,10 @@ const GSNode *gsstack_iter_bottom( const GSNode *stack )
 }
 
 /* --------------------------------------------------------------
+ * const GSNode *gsstack_iter_down():
  *
+ * Given a pointer to a gsstack node (it) return a pointer to
+ * the node below it, or NULL in error. 
  * --------------------------------------------------------------
  */
 const GSNode *gsstack_iter_down( const GSNode *it )
@@ -681,7 +888,10 @@ const GSNode *gsstack_iter_down( const GSNode *it )
 }
 
 /* --------------------------------------------------------------
+ * const GSNode *gsstack_iter_up():
  *
+ * Given a pointer to a gsstack node (it) return a pointer to
+ * the node above it, or NULL in error. 
  * --------------------------------------------------------------
  */
 const GSNode *gsstack_iter_up( const GSNode *it )
@@ -693,7 +903,10 @@ const GSNode *gsstack_iter_up( const GSNode *it )
 }
 
 /* --------------------------------------------------------------
+ * GSNode *gsstack_free():
  *
+ * Destroy all nodes of the specified gsstack (stack), and return
+ * NULL (so the caller may assign it back to the original pointer).
  * --------------------------------------------------------------
  */
 GSNode *gsstack_free( GSNode **stack )
@@ -710,7 +923,19 @@ GSNode *gsstack_free( GSNode **stack )
 }
 
 /* --------------------------------------------------------------
+ * int gsstack_append_to_fp():
  *
+ * Serialize all nodes of the specified gsstack (stack) and append
+ * them to the specified file (fp). Return 0 (false) on error,
+ * 1 (true) otherwise.
+ *
+ * NOTES:
+ *    The serialization of each node produces a text line of the form:
+ *    "count:state-meta-data@state-board-meta-data#state-board-tile-values\r\n"
+ *
+ *    For details about the serialization see also the functions:
+ *    gamestate_append_to_fp()
+ *    board_append_to_fp() (defined in the file: board.c)
  * --------------------------------------------------------------
  */
 int gsstack_append_to_fp( const GSNode *stack, FILE *fp )
@@ -720,7 +945,7 @@ int gsstack_append_to_fp( const GSNode *stack, FILE *fp )
 		return 0;  /* false */
 	}
 
-	/* a NULL stack is printed as "NULL:\n" */
+	/* a NULL stack is printed as "NULL:\r\n" */
 	if ( NULL == stack ) {
 		if ( fprintf(fp, "%s", "NULL:\r\n" ) != 7  ) {
 			DBGF( "%s", "fprintf() failed!" );
@@ -751,8 +976,17 @@ int gsstack_append_to_fp( const GSNode *stack, FILE *fp )
 /* --------------------------------------------------------------
  * GSNode *new_gsnode_from_text():
  *
- * NOTES: The expected format of the text is the following:
- *        "count:state-meta-data@state-board-meta-data#state-board-tile-values"
+ * De-serialize the specified text and load it in a newly created
+ * gsstack node. Return a pointer to the new node, or NULL on error.
+ *
+ * NOTES:
+ *    Text is expected to be already serialized as following:
+ *    "count:state-meta-data@state-board-meta-data#state-board-tile-values\r\n"
+ *
+ *    For details about the serialization see also the functions:
+ *    gsstack_append_to_fp()
+ *    gamestate_append_to_fp()
+ *    board_append_to_fp() (defined in the file: board.c)
  * --------------------------------------------------------------
  */
 GSNode *new_gsnode_from_text( char *text )
