@@ -3,11 +3,11 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 18, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * --------------------------------------------------------------
  *
- * Header file exposing a collection of miscellaneous, utility constants,
+ * Header file exposing a collection of miscellaneous constants, utility
  * macros & functions, mostly dealing with c-strings handling (including
  * filenames and debugging info).
  ****************************************************************
@@ -63,7 +63,8 @@ do {                                                              \
 	while ( '\n' != (c=getchar()) && EOF != c );              \
 } while(0)
 
-/* Print specified msg (a-la printf) along with debugging information.
+/* Print the specified msg a-la printf(),
+ * along with debugging information.
  */
 #define DBGF( format, ... )                                       \
 do {                                                              \

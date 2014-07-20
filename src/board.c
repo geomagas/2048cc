@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 18, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, board.h
  * --------------------------------------------------------------
@@ -785,13 +785,13 @@ Board *make_board( int dim )
 }
 
 /* --------------------------------------------------------------
- * Board *new_board():
+ * (Constructor) Board *new_board():
  *
- * The board constructor instantiates a new board object in memory,
- * initializes it to default values and returns a pointer to it,
- * or NULL on error.
+ * The board constructor instantiates a new object in memory,
+ * initializes it to default values and returns a pointer to
+ * it or NULL on error.
  *
- * NOTE: All new Board objects are initialized with a 4x4 grid.
+ * NOTE: All new board objects are initialized with a 4x4 grid.
  * --------------------------------------------------------------
  */
 Board *new_board( void )
@@ -808,11 +808,11 @@ Board *new_board( void )
 }
 
 /* --------------------------------------------------------------
- * Board *board_free():
+ * (Destructor) Board *board_free():
  *
- * The board destructor releases all resources occupied by the
- * specified board object, and it returns NULL (so the caller
- * may assign it back to the object pointer).
+ * The board destructor releases all resources occupied by
+ * the specified object, and returns NULL (so the caller may
+ * assign it back to the object pointer).
  * --------------------------------------------------------------
  */
 Board *board_free( Board *board )

@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 18, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: con_color.h, common.h
  * --------------------------------------------------------------
@@ -21,23 +21,25 @@
  * Skin Entities
  * -------------
  *
- * A skin has a unique id ( _SKIN_ID_XXX) and consists of several
- * colorized entities, which are of type ConColors (this type wraps
- * a foreground and a background color, and it is available through
- * con_color.h).
+ * A skin object has a unique skin-id ( _SKIN_ID_XXX) and consists
+ * of several colorized entities, which are of type ConColors (this
+ * type wraps a foreground and a background color, and it is available
+ * through con_color.h).
  *
  * Most of these entities, are conceptual counterparts of the
- * layout-entities defined in the file: tui.c, but there is no
+ * layout-entities defined in the file "tui.c", but there is no
  * direct interconnection among them (i.e. some layout-entities
  * may not be skinnable, and vice versa).
  *
- * All the entities (along with the skin id) are bundled in the
+ * All the entities (along with the skin-id) are bundled in the
  * _tuiskin struct, which is exposed publicly as an opaque type,
- * called: TuiSkin.
+ * called: TuiSkin. This is the "class".
  *
- * The skins can by manipulated externally only via the public
- * functions of this interface. They expect a TuiSkin pointer
- * as their first argument (except the constructor, of course).
+ * Tui-skin objects can by created, destroyed and manipulated
+ * externally only via the public functions of this interface.
+ * They all expect a TuiSkin pointer as their first argument
+ * (a pointer to an object, that is), except of the constructor,
+ * of course.
  *
  * Adding a New Skin (say XXX)
  * ---------------------------
@@ -124,7 +126,14 @@ struct _tuiskin {
 #if CON_COLORMODE_WIN32 == CONSYS_GET_COLORMODE()
 
 /* --------------------------------------------------------------
- * WIN32 DARK SKIN
+ * (WIN32 DARK SKIN - Conditionally Compiled)
+ * void _set_dark():
+ *
+ * Set hard-coded values to the skin-id and to the skin-entities
+ * of the specified tui-skin object (skin).
+ *
+ * NOTE: As the function name suggests, the hard-coded values are
+ *       meant to realize a dark skin (for the Windows console).
  * --------------------------------------------------------------
  */
 static void _set_dark( TuiSkin *skin )
@@ -242,7 +251,14 @@ static void _set_dark( TuiSkin *skin )
 }
 
 /* --------------------------------------------------------------
- * WIN32 LIGHT SKIN
+ * (WIN32 LIGHT SKIN - Conditionally Compiled)
+ * void _set_light():
+ *
+ * Set hard-coded values to the skin-id and to the skin-entities
+ * of the specified tui-skin object (skin).
+ *
+ * NOTE: As the function name suggests, the hard-coded values are
+ *       meant to realize a light skin (for the Windows console).
  * --------------------------------------------------------------
  */
 static void _set_light( TuiSkin *skin )
@@ -362,7 +378,14 @@ static void _set_light( TuiSkin *skin )
 #else  /* for ANSI aware terinals */
 
 /* --------------------------------------------------------------
- * ANSI DARK SKIN
+ * (ANSI DARK SKIN - Conditionally Compiled)
+ * void _set_dark():
+ *
+ * Set hard-coded values to the skin-id and to the skin-entities
+ * of the specified tui-skin object (skin).
+ *
+ * NOTE: As the function name suggests, the hard-coded values are
+ *       meant to realize a dark skin (for ANSI aware terminals).
  * --------------------------------------------------------------
  */
 static void _set_dark( TuiSkin *skin )
@@ -480,7 +503,14 @@ static void _set_dark( TuiSkin *skin )
 }
 
 /* --------------------------------------------------------------
- * ANSI LIGHT SKIN
+ * (ANSI LIGHT SKIN - Conditionally Compiled)
+ * void _set_light():
+ *
+ * Set hard-coded values to the skin-id and to the skin-entities
+ * of the specified tui-skin object (skin).
+ *
+ * NOTE: As the function name suggests, the hard-coded values are
+ *       meant to realize a light skin (for ANSI aware terminals).
  * --------------------------------------------------------------
  */
 static void _set_light( TuiSkin *skin )
@@ -600,7 +630,10 @@ static void _set_light( TuiSkin *skin )
 #endif
 
 /* --------------------------------------------------------------
+ * void _set():
  *
+ * Set the skin.id field and the hard-coded colors that correspond
+ * the specified skin-id, to the specified tui-skin object (skin).
  * --------------------------------------------------------------
  */
 static void _set( TuiSkin *skin, int id )
@@ -621,7 +654,9 @@ static void _set( TuiSkin *skin, int id )
 }
 
 /* --------------------------------------------------------------
+ * void _init():
  *
+ * Initialize the specified tui-skin object as a Win32 dark skin.
  * --------------------------------------------------------------
  */
 static void _init( TuiSkin *skin )
@@ -630,11 +665,11 @@ static void _init( TuiSkin *skin )
 }
 
 /* --------------------------------------------------------------
- * TuiSkin *new_tui_skin():
+ * (Constructor) TuiSkin *new_tui_skin():
  *
- * The tui_skin constructor creates a new TuiSkin object in memory,
- * initializes it to default values and returns a pointer to it.
- * On error, it returns NULL.
+ * The tui-skin constructor instantiates a new object in memory,
+ * initializes it to default values and returns a pointer to it,
+ * or NULL on error.
  * --------------------------------------------------------------
  */
 TuiSkin *new_tui_skin( void )
@@ -651,15 +686,14 @@ TuiSkin *new_tui_skin( void )
 }
 
 /* --------------------------------------------------------------
- * TuiSkin *tui_skin_release():
+ * (Destructor) TuiSkin *tui_skin_free():
  *
- * The tui_skin destructor releases the memory reserved for
- * the TuiSkin object pointed to by the specified pointer,
- * and it returns NULL (so the caller may assign it back to
- * the pointer of the released object).
+ * The tui-skin destructor releases the memory reserved for
+ * the specified object, and returns NULL (so the caller may
+ * assign it back to the object pointer).
  * --------------------------------------------------------------
  */
-TuiSkin *tui_skin_release( TuiSkin *skin )
+TuiSkin *tui_skin_free( TuiSkin *skin )
 {
 	if ( skin ) {
 		free( skin );
@@ -671,19 +705,22 @@ TuiSkin *tui_skin_release( TuiSkin *skin )
 /* --------------------------------------------------------------
  * int tui_skin_cycle():
  *
- * Replace the specified skin with the next skin, and return the
- * replaced id of the skin, or _SKIN_ID_NONE on error.
+ * Update the contents of the specified tui-skin object (skin)
+ * according to the next available skin, and return the updated
+ * skin.id of the object, or _SKIN_ID_NONE on error.
  *
- * NOTE: First, the function passes the id of the specified skin
- *       to the macro _NEXT_SKIN_ID(), which in turn, returns the
- *       next id according to the SKIN_ID_XXX enumeration (see
- *       its definition at the top of this file). The macro NEVER
- *       returns an invalid id.
+ * NOTE: First, the function passes the skin.id of the specified
+ *       object to the macro _NEXT_SKIN_ID(), which in turn returns
+ *       the next available skin-id, according to the SKIN_ID_XXX
+ *       enumeration (see the enumerated definitions at the top of
+ *       this file). The macro NEVER returns an invalid skin-id.
  *
- *       Then, the next-id along with the skin, are passed to the
- *       function _set(), which does the actual replacement. If
- *       the next-id is NOT handled in the switch-statement of the
- *       function _set(), then no replacement takes place.
+ *       Then, the next skin-id along with the object, are passed
+ *       to the function _set(), which updates the contents of the
+ *       object.
+ *
+ *       If the next skin-id is NOT handled in the switch-statement
+ *       of the function _set(), then no updating takes place.
  * --------------------------------------------------------------
  */
 int tui_skin_cycle( TuiSkin *skin )
@@ -701,8 +738,8 @@ int tui_skin_cycle( TuiSkin *skin )
  * (Getter)
  * const ConColors *tui_skin_get_colors_screen():
  *
- * Return a pointer to the screen colors of the specified skin,
- * or NULL on error.
+ * Return a pointer to the screen colors of the specified tui-skin
+ * object (skin), or NULL on error.
  * --------------------------------------------------------------
  */
 const const ConColors *tui_skin_get_colors_screen( const TuiSkin *skin )
@@ -716,6 +753,10 @@ const const ConColors *tui_skin_get_colors_screen( const TuiSkin *skin )
 
 /* --------------------------------------------------------------
  * (Getter)
+ * const const ConColors *tui_skin_get_colors_titlebar():
+ *
+ * Return a pointer to the title-bar colors of the specified
+ * tui-skin object, or NULL on error.
  * --------------------------------------------------------------
  */
 const const ConColors *tui_skin_get_colors_titlebar( const TuiSkin *skin )
@@ -729,8 +770,18 @@ const const ConColors *tui_skin_get_colors_titlebar( const TuiSkin *skin )
 
 /* --------------------------------------------------------------
  * (Getters)
+ *
+ * Given a specified tui-skin object (skin), each of the following
+ * functions returns a pointer to the colors of the object's tile
+ * implied by the numeric suffix of the function name, or NULL on
+ * error.
+ *
+ * For example, the function tui_skin_get_colors_tile16() returns
+ * a pointer to the colors of tiles having 16 as their value.
  * --------------------------------------------------------------
  */
+
+/* tile0 */
 const const ConColors *tui_skin_get_colors_tile0( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -740,6 +791,7 @@ const const ConColors *tui_skin_get_colors_tile0( const TuiSkin *skin )
 	return &skin->tile0;
 }
 
+/* tile2 */
 const const ConColors *tui_skin_get_colors_tile2( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -749,6 +801,7 @@ const const ConColors *tui_skin_get_colors_tile2( const TuiSkin *skin )
 	return &skin->tile2;
 }
 
+/* tile4 */
 const const ConColors *tui_skin_get_colors_tile4( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -758,6 +811,7 @@ const const ConColors *tui_skin_get_colors_tile4( const TuiSkin *skin )
 	return &skin->tile4;
 }
 
+/* tile8 */
 const const ConColors *tui_skin_get_colors_tile8( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -767,6 +821,7 @@ const const ConColors *tui_skin_get_colors_tile8( const TuiSkin *skin )
 	return &skin->tile8;
 }
 
+/* tile16 */
 const const ConColors *tui_skin_get_colors_tile16( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -776,6 +831,7 @@ const const ConColors *tui_skin_get_colors_tile16( const TuiSkin *skin )
 	return &skin->tile16;
 }
 
+/* tile32 */
 const const ConColors *tui_skin_get_colors_tile32( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -785,6 +841,7 @@ const const ConColors *tui_skin_get_colors_tile32( const TuiSkin *skin )
 	return &skin->tile32;
 }
 
+/* tile64 */
 const const ConColors *tui_skin_get_colors_tile64( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -794,6 +851,7 @@ const const ConColors *tui_skin_get_colors_tile64( const TuiSkin *skin )
 	return &skin->tile64;
 }
 
+/* tile128 */
 const const ConColors *tui_skin_get_colors_tile128( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -803,6 +861,7 @@ const const ConColors *tui_skin_get_colors_tile128( const TuiSkin *skin )
 	return &skin->tile128;
 }
 
+/* tile256 */
 const const ConColors *tui_skin_get_colors_tile256( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -812,6 +871,7 @@ const const ConColors *tui_skin_get_colors_tile256( const TuiSkin *skin )
 	return &skin->tile256;
 }
 
+/* tile512 */
 const const ConColors *tui_skin_get_colors_tile512( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -821,6 +881,7 @@ const const ConColors *tui_skin_get_colors_tile512( const TuiSkin *skin )
 	return &skin->tile512;
 }
 
+/* tile1024 */
 const ConColors *tui_skin_get_colors_tile1024( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -830,6 +891,7 @@ const ConColors *tui_skin_get_colors_tile1024( const TuiSkin *skin )
 	return &skin->tile1024;
 }
 
+/* tile2048 */
 const ConColors *tui_skin_get_colors_tile2048( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -839,6 +901,7 @@ const ConColors *tui_skin_get_colors_tile2048( const TuiSkin *skin )
 	return &skin->tile2048;
 }
 
+/* tilebig */
 const ConColors *tui_skin_get_colors_tilebig( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -850,6 +913,10 @@ const ConColors *tui_skin_get_colors_tilebig( const TuiSkin *skin )
 
 /* --------------------------------------------------------------
  * (Getter)
+ * const ConColors *tui_skin_get_colors_scoresbar():
+ *
+ * Return a pointer to the scores-bar colors of the specified
+ * tui-skin object (skin), or NULL on error.
  * --------------------------------------------------------------
  */
 const ConColors *tui_skin_get_colors_scoresbar( const TuiSkin *skin )
@@ -863,6 +930,10 @@ const ConColors *tui_skin_get_colors_scoresbar( const TuiSkin *skin )
 
 /* --------------------------------------------------------------
  * (Getter)
+ * const ConColors *tui_skin_get_colors_infobar():
+ *
+ * Return a pointer to the info-bar colors of the specified
+ * tui-skin object (skin), or NULL on error.
  * --------------------------------------------------------------
  */
 const ConColors *tui_skin_get_colors_infobar( const TuiSkin *skin )
@@ -876,8 +947,17 @@ const ConColors *tui_skin_get_colors_infobar( const TuiSkin *skin )
 
 /* --------------------------------------------------------------
  * (Getters)
+ *
+ * Given a specified tui-skin object (skin), each of the following
+ * functions returns a pointer to the colors of the object's help-area
+ * component implied by the function name, or NULL on error.
+ *
+ * For example, the function tui_skin_get_colors_help_header()
+ * return a pointer to the colors of the skin-entity: help.header
  * --------------------------------------------------------------
  */
+
+/* help.box */
 const ConColors *tui_skin_get_colors_help_box( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -887,6 +967,7 @@ const ConColors *tui_skin_get_colors_help_box( const TuiSkin *skin )
 	return &skin->help.box;
 }
 
+/* help.header */
 const ConColors *tui_skin_get_colors_help_header( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -896,6 +977,7 @@ const ConColors *tui_skin_get_colors_help_header( const TuiSkin *skin )
 	return &skin->help.header;
 }
 
+/* help.footer */
 const ConColors *tui_skin_get_colors_help_footer( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -905,6 +987,7 @@ const ConColors *tui_skin_get_colors_help_footer( const TuiSkin *skin )
 	return &skin->help.footer;
 }
 
+/* help.commands */
 const ConColors *tui_skin_get_colors_help_commands( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -914,6 +997,7 @@ const ConColors *tui_skin_get_colors_help_commands( const TuiSkin *skin )
 	return &skin->help.commands;
 }
 
+/* help.commands_disabled */
 const ConColors *tui_skin_get_colors_help_commands_disabled( const TuiSkin *skin )
 {
 	if ( NULL == skin ) {
@@ -925,6 +1009,10 @@ const ConColors *tui_skin_get_colors_help_commands_disabled( const TuiSkin *skin
 
 /* --------------------------------------------------------------
  * (Getter)
+ * const const ConColors *tui_skin_get_colors_iobar2():
+ *
+ * Return a pointer to the 2nd io-bar colors of the specified
+ * tui-skin object, or NULL on error.
  * --------------------------------------------------------------
  */
 const ConColors *tui_skin_get_colors_iobar2( const TuiSkin *skin )
@@ -938,6 +1026,10 @@ const ConColors *tui_skin_get_colors_iobar2( const TuiSkin *skin )
 
 /* --------------------------------------------------------------
  * (Getter)
+ * const const ConColors *tui_skin_get_colors_iobar():
+ *
+ * Return a pointer to the 1st io-bar colors of the specified
+ * tui-skin object, or NULL on error.
  * --------------------------------------------------------------
  */
 const ConColors *tui_skin_get_colors_iobar( const TuiSkin *skin )

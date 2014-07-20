@@ -3,11 +3,13 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 11, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: gs.h
  * --------------------------------------------------------------
  *
+ * The public interfaces of the MovesHistory "class".
+ * For details, see the file: "mvhist.c"
  ****************************************************************
  */
 
@@ -16,6 +18,7 @@
 
 #include "gs.h"
 
+/* The "class" is forward-declared as an opaque data-type */
 typedef struct _MovesHistory MovesHistory;
 
 #ifndef MVHIST_C
@@ -60,11 +63,11 @@ extern int              mvhist_pop_redo_stack( MovesHistory *mvhist );
 
 /* replay */
 
-extern GSNode           *mvhist_new_replay_stack(
+extern GSNode           *mvhist_init_replay(
                                MovesHistory *mvhist,
                                unsigned int delay
                                );
-extern int              mvhist_free_replay_stack( MovesHistory *mvhist );
+extern int              mvhist_cleanup_replay( MovesHistory *mvhist );
 
 extern long int         mvhist_peek_replay_stack_count(
                                const MovesHistory *mvhist

@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 18, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: con_color.h
  * --------------------------------------------------------------
@@ -25,7 +25,7 @@ typedef struct _tuiskin TuiSkin;
 
 #ifndef TUI_SKIN_C
 extern TuiSkin   *new_tui_skin( void );
-extern TuiSkin   *tui_skin_release( TuiSkin *skin );
+extern TuiSkin   *tui_skin_free( TuiSkin *skin );
 
 extern int       tui_skin_cycle( TuiSkin *skin );
 

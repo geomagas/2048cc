@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 18, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see following comments for limitations)
  * Dependencies: common.h, board.h, gs.h, mvhist.h, tui.h
  * --------------------------------------------------------------
@@ -62,7 +62,7 @@
 #include "tui.h"      /* text-user-interface */
 
 /* Macro for validating an input key as a command for starting a new
- * variant of the game (the valid keys are defined in the file: tui.h).
+ * variant of the game (the valid keys are defined in the file: "tui.h").
  */
 #define _VALID_VARIANT_KEY(key)     \
 (                                   \
@@ -748,7 +748,7 @@ ret_failure:
  *        Anyway, what is happening here is that the replay-stack
  *        is created by duplicating in reverse order the undo-stack
  *        (along with some house-keeping) via the function:
- *        mvhist_new_replay_stack().
+ *        mvhist_init_replay().
  *
  *        Then, until the replay-stack gets exhausted, its elements
  *        are popped out one after the other, replacing the current
@@ -779,11 +779,11 @@ static int _do_replay( GameState *gs, MovesHistory **mvhist, Tui *tui )
 //		return;
 //	}
 
-	mvhist_new_replay_stack( *mvhist, delay );
+	mvhist_init_replay( *mvhist, delay );
 	it = mvhist_iter_top_replay_stack( *mvhist );
 	if ( NULL == it ) {
 		DBGF( "%s", "mvist_iter_replay_stack(*mvhist) is NULL!" );
-		mvhist_free_replay_stack( *mvhist );
+		mvhist_cleanup_replay( *mvhist );
 		return 1;  /* true */
 	}
 	gamestate_copy( gs, gsstack_peek_state(it) );
@@ -797,7 +797,7 @@ static int _do_replay( GameState *gs, MovesHistory **mvhist, Tui *tui )
 			);
 		if ( TUI_KEY_ESCAPE == key || TUI_KEY_REPLAY_BACK == key ) {
 			const Board *brd = NULL;
-			mvhist_free_replay_stack( *mvhist );
+			mvhist_cleanup_replay( *mvhist );
 			gamestate_copy(
 				gs,
 				mvhist_peek_undo_stack_state(*mvhist)
@@ -891,7 +891,7 @@ static void _cleanup( GameState *gs, MovesHistory *mvhist, Tui *tui )
 		DBGF( "%s", "NULL pointer argument!" );
 		return;
 	}
-	tui_release( tui );
+	tui_free( tui );
 	mvhist_free( mvhist );
 	gamestate_free( gs );
 }
