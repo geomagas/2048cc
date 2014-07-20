@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 18, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: con_color.h, my.h, common.h, board.h,
  *               gs.h, mvhist.h, tui_skin.h
@@ -17,7 +17,7 @@
  *
  * Functions having the "tui_sys_" prefix in their names do NOT operate
  * on tui objects. They are mostly direct wrappers of functions that are
- * implemented in the file: my.c.  
+ * implemented in the file: "my.c".  
  *
  * Functions with a "_" prefix in their names are meant to be private
  * in this source-module. They are usually inlined, without performing
@@ -38,7 +38,7 @@
  *
  * The right-half consists of the following entities (top to bottom):
  * - help-box     (shows the game instructions & commands)
- * - iobar2       (iobar supporting messages)
+ * - iobar2       (iobar supporting messages and/or prompts)
  * - iobar        (used for prompting user-input)
  *
  * The positions & dimensions of the above entities are stored in
@@ -670,18 +670,18 @@ static int _init_layout( Tui *tui, const Board *board )
 }
 
 /* --------------------------------------------------------------
- * Tui *tui_release():
+ * (Destructor) Tui *tui_free():
  *
- * The tui destructor releases the memory reserved for the specified
- * Tui object, it restores the console colors, it enables the cursor,
- * and finally it returns NULL (so the caller may assign it to the
- * object pointer).
+ * The tui destructor releases all resources occupied by the
+ * specified object, restores the console colors, enables the
+ * cursor, and finally returns NULL (so the caller may assign
+ * it back to the object pointer).
  * --------------------------------------------------------------
  */
-Tui *tui_release( Tui *tui )
+Tui *tui_free( Tui *tui )
 {
 	if ( tui ) {
-		tui_skin_release( tui->skin );
+		tui_skin_free( tui->skin );
 		free( tui );
 	}
 
@@ -693,13 +693,12 @@ Tui *tui_release( Tui *tui )
 }
 
 /* --------------------------------------------------------------
- * Tui *new_tui():
+ * (Constructor) Tui *new_tui():
  *
- * The tui constructor reserves memory for a Tui object, it initializes
- * it to default values, it saves the console colors, it hides the cursor,
- * it clears the screen (using the default skin's bg color), and finally
- * it returns a pointer to the created Tui object.
- * On error, it returns NULL.
+ * The tui constructor instantiates a new object in memory, initializes
+ * it to default values, saves the console colors, hides the cursor,
+ * clears the screen (using the default skin's bg color), and finally
+ * returns a pointer to the new object, or NULL on error.
  * --------------------------------------------------------------
  */
 Tui *new_tui( GameState *state, MovesHistory *mvhist )
@@ -733,12 +732,12 @@ Tui *new_tui( GameState *state, MovesHistory *mvhist )
 	tui->skin = new_tui_skin();
 	if ( NULL == tui->skin ) {
 		DBGF( "%s", "skin allocation failed!" );
-		tui_release( tui );    /* this also calls CONOUT_RESTORE() */
+		tui_free( tui );    /* this also calls CONOUT_RESTORE() */
 		return NULL;
 	}
 
 	if ( !_init_layout(tui, board) ) {
-		tui_release( tui );    /* this also calls CONOUT_RESTORE() */
+		tui_free( tui );    /* this also calls CONOUT_RESTORE() */
 		return NULL;
 	}
 

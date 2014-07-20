@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 18, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: my.h, board.h, gs.h, mvhist.h
  * --------------------------------------------------------------
@@ -59,7 +59,7 @@ enum {
 #ifndef TUI_C
 
 extern Tui  *new_tui( GameState *state, MovesHistory *mvhist );
-extern Tui  *tui_release( Tui *tui );
+extern Tui  *tui_free( Tui *tui );
 extern int  tui_update_board_reference( Tui *tui, Board *board );
 extern int  tui_update_mvhist_reference( Tui *tui, MovesHistory *mvhist );
 

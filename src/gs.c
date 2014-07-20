@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 18, 2014
+ * Date:         July 20, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, board.h, gs.h
  * --------------------------------------------------------------
@@ -134,12 +134,12 @@ struct _GSNode{
 };
 
 /* --------------------------------------------------------------
- * GameState *new_gamestate():
+ * (Constructor) GameState *new_gamestate():
  *
- * The game-state constructor instantiates a new game-state object
- * in memory, creates a square board of the specified single-dimension
- * for it (dim), initializes the object to default values and returns
- * a pointer to the new object, or NULL on error.
+ * The game-state constructor instantiates a new object in memory,
+ * creates a square board of the specified single-dimension for it
+ * (dim), initializes the object to default values and returns a
+ * pointer to the new object, or NULL on error.
  * --------------------------------------------------------------
  */
 GameState *new_gamestate( int dim )
@@ -174,11 +174,11 @@ GameState *new_gamestate( int dim )
 }
 
 /* --------------------------------------------------------------
- * GameState *gamestate_free():
+ * (Destructor) GameState *gamestate_free():
  *
  * The game-state destructor releases all resources occupied by the
- * specified game-state object, and it returns NULL (so the caller
- * may assign it back to the object pointer).
+ * specified object, and returns NULL (so the caller may assign it
+ * back to the object pointer).
  * --------------------------------------------------------------
  */
 GameState *gamestate_free( GameState *state )
@@ -253,7 +253,7 @@ int gamestate_reset( GameState *state )
 /* --------------------------------------------------------------
  * (Getter) Board *gamestate_get_board():
  *
- * Return a pointer to the current board object of the specified
+ * Return the current pointer to the board object of the specified
  * game-state object (state) or NULL on error.
  * --------------------------------------------------------------
  */
@@ -537,7 +537,7 @@ int gamestate_set_nextmove( GameState *state, int nextmv )
  *
  *    For details about the serialized board-meta-data and
  *    board-tile-values, see the function: board_append_to_fp()
- *    defined in the file: board.c
+ *    defined in the file: "board.c"
  * --------------------------------------------------------------
  */
 int gamestate_append_to_fp( const GameState *state, FILE *fp )
@@ -594,7 +594,7 @@ int gamestate_append_to_fp( const GameState *state, FILE *fp )
  *
  *    For details about the serialized board-meta-data and
  *    board-tile-values, see the function: board_append_to_fp()
- *    defined in the file: board.c
+ *    defined in the file: "board.c"
  * --------------------------------------------------------------
  */
 GameState *new_gamestate_from_text( char *text )
@@ -690,7 +690,7 @@ static inline GSNode *_make_node( int dim )
 /* --------------------------------------------------------------
  * GSNode *_node_free():
  *
- * Releases all resources occupied by the specified gsstack node
+ * Release all resources occupied by the specified gsstack node
  * and return NULL (so the caller may assign it back to the node
  * pointer).
  * --------------------------------------------------------------
@@ -753,8 +753,8 @@ int gsstack_push( GSNode **stack, const GameState *state )
 /* --------------------------------------------------------------
  * long int gsstack_peek_count():
  *
- * Return the value of the count field, of the top node of the
- * specified gsstack (stack), or 0 on error.
+ * Return the current value of the count field, of the top
+ * node of the specified gsstack (stack), or 0 on error.
  *
  * NOTE: The count of nodes in a gsstack is 1-based.
  * --------------------------------------------------------------
@@ -771,8 +771,8 @@ long int gsstack_peek_count( const GSNode *stack )
 /* --------------------------------------------------------------
  * const GameState *gsstack_peek_state():
  *
- * Return a pointer to the game-state object stored at the top
- * node of the specified gsstack (stack), or NULL on error.
+ * Return a pointer to the game-state object stored at the current
+ * top node of the specified gsstack (stack), or NULL on error.
  * --------------------------------------------------------------
  */
 const GameState *gsstack_peek_state( const GSNode *stack )
@@ -876,7 +876,7 @@ const GSNode *gsstack_iter_bottom( const GSNode *stack )
  * const GSNode *gsstack_iter_down():
  *
  * Given a pointer to a gsstack node (it) return a pointer to
- * the node below it, or NULL in error. 
+ * the node below it, or NULL on error. 
  * --------------------------------------------------------------
  */
 const GSNode *gsstack_iter_down( const GSNode *it )
@@ -891,7 +891,7 @@ const GSNode *gsstack_iter_down( const GSNode *it )
  * const GSNode *gsstack_iter_up():
  *
  * Given a pointer to a gsstack node (it) return a pointer to
- * the node above it, or NULL in error. 
+ * the node above it, or NULL on error. 
  * --------------------------------------------------------------
  */
 const GSNode *gsstack_iter_up( const GSNode *it )
@@ -930,12 +930,16 @@ GSNode *gsstack_free( GSNode **stack )
  * 1 (true) otherwise.
  *
  * NOTES:
+ *
  *    The serialization of each node produces a text line of the form:
  *    "count:state-meta-data@state-board-meta-data#state-board-tile-values\r\n"
  *
+ *    If the specified gsstack is empty, the produced text-line becomes:
+ *    "NULL:\r\n"
+ *
  *    For details about the serialization see also the functions:
  *    gamestate_append_to_fp()
- *    board_append_to_fp() (defined in the file: board.c)
+ *    board_append_to_fp() (defined in the file: "board.c")
  * --------------------------------------------------------------
  */
 int gsstack_append_to_fp( const GSNode *stack, FILE *fp )
@@ -986,7 +990,7 @@ int gsstack_append_to_fp( const GSNode *stack, FILE *fp )
  *    For details about the serialization see also the functions:
  *    gsstack_append_to_fp()
  *    gamestate_append_to_fp()
- *    board_append_to_fp() (defined in the file: board.c)
+ *    board_append_to_fp() (defined in the file: "board.c")
  * --------------------------------------------------------------
  */
 GSNode *new_gsnode_from_text( char *text )
