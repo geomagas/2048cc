@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 20, 2014
+ * Date:         July 21, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, board.h
  * --------------------------------------------------------------
@@ -97,7 +97,7 @@ struct _board {
  * the player wins the game).
  *
  * NOTE: For a 4x4 board, the sentinel-value is 2048, but for
- *       a 5x5 board the sentinel-value is 16384, etc. See the
+ *       a 5x5 board the sentinel-value is 65536, etc. See the
  *       enumerated definitions _VAL_SENTINEL_X at the top of
  *       this file.
  * --------------------------------------------------------------
