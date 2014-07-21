@@ -35,7 +35,7 @@
  * _tuiskin struct, which is exposed publicly as an opaque type,
  * called: TuiSkin. This is the "class".
  *
- * Tui-skin objects can by created, destroyed and manipulated
+ * A Tui-skin object can be created, destroyed and manipulated
  * externally only via the public functions of this interface.
  * They all expect a TuiSkin pointer as their first argument
  * (a pointer to an object, that is), except of the constructor,
@@ -656,7 +656,7 @@ static void _set( TuiSkin *skin, int id )
 /* --------------------------------------------------------------
  * void _init():
  *
- * Initialize the specified tui-skin object as a Win32 dark skin.
+ * Initialize the specified tui-skin object as a dark skin.
  * --------------------------------------------------------------
  */
 static void _init( TuiSkin *skin )

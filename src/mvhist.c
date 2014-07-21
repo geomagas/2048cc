@@ -3,7 +3,7 @@
  *
  * Author:       migf1 <mig_f1@hotmail.com>
  * Version:      0.3a3
- * Date:         July 20, 2014
+ * Date:         July 21, 2014
  * License:      Free Software (see comments in main.c for limitations)
  * Dependencies: common.h, gs.h, mvhist.h
  * --------------------------------------------------------------
@@ -384,11 +384,11 @@ GSNode *mvhist_init_replay( MovesHistory *mvhist, unsigned int delay )
 /* --------------------------------------------------------------
  int mvhist_cleanup_replay():
  *
- * Cleanup the replay nested structure to default values.
- * Return 0 (false) on error, 1 (true) otherwise.
+ * Cleanup the replay nested structure of the specified moves-history
+ * object (mvhist). Return 0 (false) on error, 1 (true) otherwise.
  *
- * NOTE: Cleanup involves freeing up the replay.stack
- *       and setting the pointer equal to NULL.
+ * NOTE: Cleanup involves, among other things, freeing up the
+ *       replay.stack and setting its pointer equal to NULL.
  * --------------------------------------------------------------
  */
 int mvhist_cleanup_replay( MovesHistory *mvhist )
@@ -666,7 +666,8 @@ int mvhist_get_didundo( const MovesHistory *mvhist )
  * Set the boolean value of the didundo field inside the
  * replay nested structure of the specified moves-history
  * object (mvhist), to the value specified by the 2nd
- * argument (didundo). Return 0 (false) on error, 1 (true).
+ * argument (didundo). Return 0 (false) on error, 1 (true)
+ * otherwise.
  * --------------------------------------------------------------
  */
 int mvhist_set_didundo( MovesHistory *mvhist, int didundo )
@@ -744,7 +745,7 @@ static inline int _replay_append_to_fp( const MovesHistory *mvhist, FILE *fp )
  * int mvhist_save_to_file():
  *
  * Serialize the specified moves-history object (mvhist) and write
- * it to the specified file (fname). Return 0 (false) on error,
+ * it to the specified text file (fname). Return 0 (false) on error,
  * 1 (true) otherwise.
  *
  * NOTES:
@@ -824,54 +825,56 @@ ret_failure:
 }
 
 /* --------------------------------------------------------------
- * int _load_stack_starting_from_fp_line():
+ * int _load_stack_from_line_plus_fp_lines():
  *
- * Given a c-string line of size lnsize (including NUL terminating byte)
- * as a starting point within a given text file (fp) and given a gsstack,
- * de-serialize the specified line and all its subsequent lines while
- * pushing them as nodes onto the specified gsstack.
+ * Given a gsstack (stack), a text file pointer (fp) and a c-string
+ * (line) with size at least (lnsize) including the NUL terminating
+ * byte, de-serialize as a node the line, along with required file
+ * lines after fp, while pushing them onto the stack. Reverse the
+ * loaded stack before handing it back to the caller.
  *
  * Return 0 (false) on error, 1 (true) otherwise.
  *
  * NOTES (IMPORTANT!):
  *
  * 1. All pointer arguments of the function MUST be non-NULL and valid.
- * 2. The line c-string and subsequent lines within the file MUST be
- *    already properly serialized.
- * 3. Within the file, the (fp) file-pointer MUST initially point to
- *    the start of the NEXT line to be read (that is, excluding the
- *    line passed as an argument to the function).
+ * 2. The initial line and subsequent file lines MUST be already properly
+ *    serialized as gsstack nodes.
+ * 3. The initial line should have been already read from the file before
+ *    being passed as an argument to this function. Thus, within the file,
+ *    (fp) MUST initially point to the start of the NEXT line to be read
+ *    (that is, excluding the line passed as an argument to the function).
  * 4. lnsize MUST be large enough to hold the LARGEST line in the file
  *    (including the NUL terminating byte).
  *
- * When ALL the above are true, the function knows when to stop
- * populating the gsstack, because the total count of lines to
- * be read from the file as nodes, is already stored in the
- * beginning of the serialized line that has been passed as an
- * argument to the function.
+ * When ALL the above are true, the function knows how many lines to
+ * read from the file while populating the stack, because their total
+ * count is already stored in the beginning of the initial line that
+ * has been passed as an argument to the function.
  *
- * It is part of the serialization of a gsstack node, to produce
- * its 1-based count inside the stack as the first thing in its
- * serialized text.
+ * It is part of the serialization of a gsstack node, to produce its
+ * 1-based count inside the stack as the first thing in its serialized
+ * text.
  * --------------------------------------------------------------
  */
-static inline int _load_stack_starting_from_fp_line(
+static inline int _load_stack_from_line_plus_fp_lines(
 	GSNode       **stack,
-	FILE         *fp,
 	char         *line,
-	size_t       lnsize
+	size_t       lnsize,
+	FILE         *fp
 	)
 {
-	int i = 0;
-	long int count;
-	GSNode *node = NULL;
+	long int i = 0;
+	long int count;          /* total number of lines to load */
+	GSNode *revstack = NULL; /* reversed stack */
+	GSNode *node     = NULL; /* temporary node */
 
 	if ( 0 == strcmp(line, "NULL:\n") ) {
 		return 1;  /* true */
 	}
 
 	if ( sscanf(line, "%ld", &count) < 1 ) {
-		DBGF( "%s", "sscanf() failed to read count of stack" );
+		DBGF( "%s", "sscanf() failed to read count of lines" );
 		goto ret_failure;
 	}
 	for (i=0; i < count; i++) {
@@ -896,7 +899,7 @@ static inline int _load_stack_starting_from_fp_line(
 	}
 
 	/* reverse the loaded stack */
-	GSNode *revstack = gsstack_dup_reversed( *stack );
+	revstack = gsstack_dup_reversed( *stack );
 	if ( NULL == revstack ) {
 		DBGF( "%s", "gsstack_dup_reversed() failed!" );
 		goto ret_failure;
@@ -915,11 +918,11 @@ ret_failure:
 /* --------------------------------------------------------------
  * MovesHist *new_mvhist_from_file():
  *
- * De-serialize the contents of the specified file (fname) and
- * load them into a newly created moves-histtoy object. Return
- * a pointer to the newly created object, or NULL on error.
+ * De-serialize the contents of the specified text file (fname)
+ * and load them into a newly created moves-histtoy object.
+ * Return a pointer to the newly created object, or NULL on error.
  *
- * NOTE: The contents of the file Text are expected to be already
+ * NOTE: The contents of the text file are expected to be already
  *       serialized, as described in the comments of the function:
  *       mvhist_save_to_file()
  * --------------------------------------------------------------
@@ -966,10 +969,17 @@ MovesHistory *new_mvhist_from_file( const char *fname )
 		goto ret_failure;
 	}
 	s_fixeol( line );
-	if (
-	!_load_stack_starting_from_fp_line(&mvh->undo, fp, line, MAX_LNSIZE)
+	if ( !_load_stack_from_line_plus_fp_lines(
+		&mvh->undo,
+		line,
+		MAX_LNSIZE,
+		fp
+		)
 	){
-		DBGF( "%s", "_load_stack_starting_from_fp_line(undo) failed!");
+		DBGF(
+		    "%s",
+		    "_load_stack_from_line_plus_fp_lines(undo) failed!"
+		    );
 		goto ret_failure;
 	}
 
@@ -979,10 +989,17 @@ MovesHistory *new_mvhist_from_file( const char *fname )
 		goto ret_failure;
 	}
 	s_fixeol( line );
-	if (
-	!_load_stack_starting_from_fp_line(&mvh->redo, fp, line, MAX_LNSIZE)
+	if ( !_load_stack_from_line_plus_fp_lines(
+		&mvh->redo,
+		line,
+		MAX_LNSIZE,
+		fp
+		)
 	){
-		DBGF( "%s", "_load_stack_starting_from_fp_line(redo) failed" );
+		DBGF(
+		    "%s",
+		    "_load_stack_from_line_plus_fp_lines(redo) failed"
+		    );
 		goto ret_failure;
 	}
 
@@ -1014,14 +1031,17 @@ MovesHistory *new_mvhist_from_file( const char *fname )
 	}
 	s_fixeol( line );
 	if (
-	!_load_stack_starting_from_fp_line(
+	!_load_stack_from_line_plus_fp_lines(
 		&mvh->replay.stack,
-		fp,
 		line,
-		MAX_LNSIZE
+		MAX_LNSIZE,
+		fp
 		)
 	){
-		DBGF("%s", "_load_stack_starting_from_fp_line(replay.stack) failed");
+		DBGF(
+		  "%s",
+		  "_load_stack_from_line_plus_fp_lines(replay.stack) failed"
+		  );
 		goto ret_failure;
 	}
 
