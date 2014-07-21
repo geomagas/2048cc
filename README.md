@@ -1,23 +1,25 @@
 2048cc
 ======
 
-**Author** : migf1 <mig_f1@hotmail.com>
-**Version**: 0.3a3
-**Date**   : July 18, 2014
+**Initial author**: [migf1](mailto:mig_f1@hotmail.com)  
+**Latest version**: 0.3a3 (July 21, 2014)  
+**Discussion (Greek)**: http://goo.gl/b0AZG5  
 
-Console clone of the game 2048 ( http://gabrielecirulli.github.io/2048/ )
+**2048cc** is a console-clone of Gabriel Cirulli's **[2048 game](http://gabrielecirulli.github.io/2048/)**,
+written in standard ISO C99. It is meant to be source-wise cross-platform across
+Windows, Unix, Linux, and MacOSX (for the latter 3, you should enable ANSI-colors
+support on your terminal emulation).
 
-2048 is written in ISO C99 by migf1 (http://goo.gl/b0AZG5). It is meant
-to be cross-platform across Windows, Unix, Linux and MacOSX (for the last 3
-you should enable ANSI-colors support on your terminal emulator).
+>**It is put on Github with the hope of attracting more contributors.**
 
-Compared to the original game, this version additionally supports:
+Compared to the original game, 2048cc additionally supports:
+
 - skins (color themes)
 - undo/redo (it disables best-score tracking)
 - replays
 - load/save games (via replays)
 
-Moreover, this version of the game is also cloning 3 unofficial variants
+Currently, 2048cc is also cloning 3 unofficial variants
 of the original game, namely:
 
 - 5x5 board ( http://2048game.com/variations/5x5.html )
@@ -28,33 +30,43 @@ Pre-compiled Binaries
 ---------------------
 
 The included zip-file contains a pre-compiled 32bit executable file
-for Windows (XP or newer). It is called: *2048cc_win_x86.exe*.
+for Windows (XP or newer).  
+It is called: *2048cc_win_x86.exe*.
 
-On other platforms, you can compile the sources. See the next section.
+On other platforms, you can compile the sources. See the next 2 sections.
 
 How to compile the game
-------------------------
+-----------------------
 
-To compile with the *gcc tool-chain* follow these simple steps:
+Compiling the sources is pretty straight-forward. Currently, no configuration
+tools are necessary.
+
+**Using the command-line**
+
+To compile the sources with the *gcc tool-chain*, please follow
+these simple steps (adopt accordingly for other compilers):
 
 1. Extract the zip file anywhere you want in your hard-drive.
 2. From the command-line, navigate into the *src/* folder.
-3. On Windows (e.g. with the *mingw gcc tool-chain*) type:
+3. On **Windows** (e.g. using the *mingw* or *cygwin* gcc tool-chain) type:  
    `gcc -std=c99 -s -O3 -D_BSD_SOURCE *.c -o 2048cc.exe`
 
-   On Unix/Linux/MacOSX type:
+   On **Unix/Linux/MacOSX** type:  
    `gcc -std=c99 -s -O3 -D_BSD_SOURCE *.c -o 2048cc.out`
 
-   Recent versions of MacOSX do not include the *gcc tool-chain* by
-   default, so you may need to install it manually. Please read the
-   following thread for instructions: http://stackoverflow.com/questions/9353444/how-to-use-install-gcc-on-mac-os-x-10-8-xcode-4-4
+   >Recent versions of **MacOSX** do **not** include the *gcc tool-chain*  
+   >by default, so you may need to install it manually. Please read  
+   >[this thread](http://stackoverflow.com/questions/9353444/how-to-use-install-gcc-on-mac-os-x-10-8-xcode-4-4) for instructions.
 
 4. See the next section on how to run the executable file.
 
-To compile from within an IDE (with any compiler) follow these steps:
+**Using any IDE/C99-compiler combo**
+
+To compile the sources from within an IDE, with any C99 compiler,
+please follow these simple steps:
 
 1. Extract the zip file anywhere you want in your hard-drive.
-2. Create a new console/terminal project (you may call it: 2048cc).
+2. Create a new console/terminal project (perhaps call it: 2048cc).
 3. Add to the project all the .c files found inside the *src/* folder.
 4. Enable *C99 support* on your compiler.
 5. Predefine the directive `_BSD_SOURCE` (only tested with gcc).
@@ -75,7 +87,7 @@ Run the executable, enjoy the game and please report any bugs you may find.
 Game-play
 ---------
 
-There are actually 2 modes: normal and replay-mode.
+There are 2 playing modes: normal and replay.
 
 **Normal-mode**
 
@@ -151,11 +163,10 @@ License
 The game is open-source, free software with only 3 limitations:
 
 1. Keep it free and open-source.
-2. Do not try to make any kind of profit from it or from any
-    derivatives of it, unless you have contacted me for special
-    arrangements ( mig_f1@hotmail.com ).
+2. Do not attempt to make any kind of profit from it or from any
+   derivatives of it.
 3. Always re-distribute the original package, along with any
-    software you distribute that is based on this game.
+   software you distribute based on this game.
 
 Disclaimer
 ----------

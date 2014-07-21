@@ -35,11 +35,10 @@
  * The game is open-source, free software with only 3 limitations:
  *
  * 1. Keep it free and open-source.
- * 2. Do not try to make any kind of profit from it or from any
- *    derivatives of it, unless you have contacted me for special
- *    arrangements ( mig_f1@hotmail.com ).
+ * 2. Do not attempt to make any kind of profit from it or from
+ *    any derivatives of it.
  * 3. Always re-distribute the original package, along with any
- *    software you distribute that is based on this game.
+ *    software you distribute based on this game.
  *
  * Disclaimer
  * ----------
