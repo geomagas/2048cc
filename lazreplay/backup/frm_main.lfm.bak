@@ -1,17 +1,18 @@
 object frmMain: TfrmMain
-  Left = 436
+  Left = 228
   Height = 473
-  Top = 186
+  Top = 123
   Width = 405
   AutoSize = True
   Caption = '2048cc Replayer'
-  ClientHeight = 454
+  ClientHeight = 450
   ClientWidth = 405
   Menu = MainMenu
-  LCLVersion = '1.0.12.0'
+  OnCreate = FormCreate
+  LCLVersion = '1.2.2.0'
   object Board: TDrawGrid
     Left = 0
-    Height = 408
+    Height = 403
     Top = 26
     Width = 405
     Align = alClient
@@ -24,11 +25,12 @@ object frmMain: TfrmMain
     RowCount = 4
     TabOrder = 0
     Visible = False
+    OnDrawCell = BoardDrawCell
   end
   object StatusBar: TStatusBar
     Left = 0
-    Height = 20
-    Top = 434
+    Height = 21
+    Top = 429
     Width = 405
     Panels = <>
     SimpleText = 'No replay loaded. Use the Open command to load a replay'
@@ -198,7 +200,7 @@ object frmMain: TfrmMain
   end
   object MainMenu: TMainMenu
     Images = ActionImageList
-    left = 344
+    left = 248
     top = 72
     object MenuItem2: TMenuItem
       Caption = 'File'
@@ -456,12 +458,13 @@ object frmMain: TfrmMain
   end
   object ActionList: TActionList
     Images = ActionImageList
-    left = 384
+    left = 304
     top = 72
     object actOpen: TAction
       Category = 'file'
       Caption = 'Open...'
       OnExecute = actOpenExecute
+      ShortCut = 16463
     end
     object actExit: TAction
       Category = 'file'
@@ -473,6 +476,7 @@ object frmMain: TfrmMain
       AutoCheck = True
       Caption = 'Play'
       ImageIndex = 4
+      ShortCut = 16464
     end
     object actPause: TAction
       Category = 'playback'

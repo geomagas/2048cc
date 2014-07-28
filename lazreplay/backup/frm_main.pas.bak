@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, Menus,
-  ActnList, Grids, ComCtrls, ExtCtrls, StdCtrls;
+  ActnList, Grids, ComCtrls, ExtCtrls, StdCtrls, u_replay;
 
 type
 
@@ -55,10 +55,12 @@ type
     ToolButton8: TToolButton;
     procedure actExitExecute(Sender: TObject);
     procedure actOpenExecute(Sender: TObject);
+    procedure BoardDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect;
+      aState: TGridDrawState);
+    procedure FormCreate(Sender: TObject);
   private
     { private declarations }
-    Procedure RefreshBoard;
-    Procedure LoadReplay(FileName:String);
+    TheReplay:TReplay;
   public
     { public declarations }
   end;
@@ -68,69 +70,9 @@ var
 
 implementation
 
-Type
-	TBoard=Array of Integer;
-  pBoard=^TBoard;
-	TState=Record
-    win,prev,next:Integer;
-    board:pBoard;
-    End;
-	pState=^TState;
-
-Function CreateState(win,prev,next:Integer;board:pBoard):pState;
-Begin
-Result:=new(pState);
-Result^.win:=win;
-Result^.prev:=prev;
-Result^.next:=next;
-Result^.board:=board;
-End;
-
-Function BoardFromString(s:String):pBoard;
-Var
-	sl:TStringList;
-  i:Integer;
-Begin
-sl:=TStringList.Create;
-sl.Delimiter:=' ';
-sl.DelimitedText:=s;
-SetLength(Result^,sl.Count);
-For i:=0 to sl.Count-1 do
-	Result^[i]:=StrToInt(sl.Strings[i]);
-sl.Free;
-end;
-
 {$R *.lfm}
 
 { TfrmMain }
-
-Procedure TfrmMain.RefreshBoard;
-Var
-	r,c:Integer;
-  state:pBoard;
-Begin
-state:=BoardFromString('0 0 0 0 1 0 0 2 0 4 0 0 3 0 0 0');
-{
-With Board do
-  For r:=0 to RowCount-1 do
-    For c:=0 to ColCount-1 do
-    	Canvas.TextRect(CellRect(c,r),0,0,IntToStr(state^[r*4+c]));
-}
-end;
-
-Procedure TfrmMain.LoadReplay(FileName:String);
-Var
-	sav:TStringList;
-Begin
-sav:=TStringList.Create;
-With sav do
-	Begin
-  LoadFromFile(FileName);
-  End;
-Board.Visible:=True;
-StatusBar.SimpleText:=FileName;
-RefreshBoard;
-End;
 
 procedure TfrmMain.actExitExecute(Sender: TObject);
 begin
@@ -139,7 +81,30 @@ end;
 
 procedure TfrmMain.actOpenExecute(Sender: TObject);
 begin
-With OpenDialog do If Execute then LoadReplay(FileName);
+With OpenDialog do
+  If Execute then
+  	If TheReplay.LoadFromFile(FileName) then
+      With StatusBar,Board do
+      	Begin
+			  Invalidate; // to force redraw
+			  Visible:=True;
+			  SimpleText:=FileName;
+			  end;
+end;
+
+procedure TfrmMain.BoardDrawCell(Sender: TObject; aCol, aRow: Integer;
+  aRect: TRect; aState: TGridDrawState);
+begin
+{
+With Canvas,TheReplay do
+  If Dim>0 then
+		TextRect(aRect,0,0,IntToStr(state^[aRow*Dim+aCol]));
+}
+end;
+
+procedure TfrmMain.FormCreate(Sender: TObject);
+begin
+TheReplay:=TReplay.Create;
 end;
 
 end.

@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="9"/>
@@ -32,7 +32,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="2">
+    <Units Count="3">
       <Unit0>
         <Filename Value="replay.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -46,6 +46,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="FRM_Main"/>
       </Unit1>
+      <Unit2>
+        <Filename Value="u_replay.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="u_replay"/>
+      </Unit2>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
