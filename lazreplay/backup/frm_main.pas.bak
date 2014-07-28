@@ -22,7 +22,7 @@ type
     actPlay: TAction;
     actOpen: TAction;
     ActionList: TActionList;
-    DrawGrid1: TDrawGrid;
+    Board: TDrawGrid;
     ActionImageList: TImageList;
     Image1: TImage;
     Image2: TImage;
@@ -44,7 +44,7 @@ type
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     OpenDialog: TOpenDialog;
-    StatusBar1: TStatusBar;
+    StatusBar: TStatusBar;
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
@@ -57,6 +57,7 @@ type
     procedure actOpenExecute(Sender: TObject);
   private
     { private declarations }
+    Procedure RefreshBoard;
     Procedure LoadReplay(FileName:String);
   public
     { public declarations }
@@ -67,13 +68,68 @@ var
 
 implementation
 
+Type
+	TBoard=Array of Integer;
+  pBoard=^TBoard;
+	TState=Record
+    win,prev,next:Integer;
+    board:pBoard;
+    End;
+	pState=^TState;
+
+Function CreateState(win,prev,next:Integer;board:pBoard):pState;
+Begin
+Result:=new(pState);
+Result^.win:=win;
+Result^.prev:=prev;
+Result^.next:=next;
+Result^.board:=board;
+End;
+
+Function BoardFromString(s:String):pBoard;
+Var
+	sl:TStringList;
+  i:Integer;
+Begin
+sl:=TStringList.Create;
+sl.Delimiter:=' ';
+sl.DelimitedText:=s;
+SetLength(Result^,sl.Count);
+For i:=0 to sl.Count-1 do
+	Result^[i]:=StrToInt(sl.Strings[i]);
+sl.Free;
+end;
+
 {$R *.lfm}
 
 { TfrmMain }
 
-Procedure TfrmMain.LoadReplay(FileName:String);
+Procedure TfrmMain.RefreshBoard;
+Var
+	r,c:Integer;
+  state:pBoard;
 Begin
-ShowMessage('Suppose '+FileName+' is loaded.');
+state:=BoardFromString('0 0 0 0 1 0 0 2 0 4 0 0 3 0 0 0');
+{
+With Board do
+  For r:=0 to RowCount-1 do
+    For c:=0 to ColCount-1 do
+    	Canvas.TextRect(CellRect(c,r),0,0,IntToStr(state^[r*4+c]));
+}
+end;
+
+Procedure TfrmMain.LoadReplay(FileName:String);
+Var
+	sav:TStringList;
+Begin
+sav:=TStringList.Create;
+With sav do
+	Begin
+  LoadFromFile(FileName);
+  End;
+Board.Visible:=True;
+StatusBar.SimpleText:=FileName;
+RefreshBoard;
 End;
 
 procedure TfrmMain.actExitExecute(Sender: TObject);
