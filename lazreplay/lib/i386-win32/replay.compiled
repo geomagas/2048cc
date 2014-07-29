@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<CONFIG>
+  <Compiler Value="C:\lazarus\fpc\2.6.2\bin\i386-win32\fpc.exe" Date="1125670419"/>
+  <Params Value=" -MObjFPC -Scghi -O1 -g -gl -WG -vewnhi -FiE:\cygwin64\home\geomagas\2048cc\lazreplay\lib\i386-win32 -FuC:\lazarus\lcl\units\i386-win32\win32 -FuC:\lazarus\lcl\units\i386-win32 -FuC:\lazarus\components\lazutils\lib\i386-win32 -FuC:\lazarus\packager\units\i386-win32 -FuE:\cygwin64\home\geomagas\2048cc\lazreplay\ -FUE:\cygwin64\home\geomagas\2048cc\lazreplay\lib\i386-win32\ -l -dLCL -dLCLwin32 replay.lpr"/>
+</CONFIG>
