@@ -963,7 +963,9 @@ MovesHistory *new_mvhist_from_file( const char *fname )
 		goto ret_failure;
 	}
 
-	/* read the undo-stack */
+	/*
+	 * read the undo-stack
+	*/
 	if ( NULL == fgets(line, MAX_LNSIZE, fp) ) {
 		DBGF( "%s", "fgets() failed to read undo-stack line" );
 		goto ret_failure;
@@ -983,7 +985,9 @@ MovesHistory *new_mvhist_from_file( const char *fname )
 		goto ret_failure;
 	}
 
-	/* read the redo-stack */
+	/*
+	 * read the redo-stack
+	 */
 	if ( NULL == fgets(line, MAX_LNSIZE, fp) ) {
 		DBGF( "%s", "fgets() failed to read redo-stack line" );
 		goto ret_failure;
@@ -1026,7 +1030,7 @@ MovesHistory *new_mvhist_from_file( const char *fname )
 	}
 	/* then the replay-stack */
 	if ( NULL == fgets(line, MAX_LNSIZE, fp) ) {
-		DBGF( "%s", "fgets() failed to read redo-stack line" );
+		DBGF( "%s", "fgets() failed to read redo-stack node" );
 		goto ret_failure;
 	}
 	s_fixeol( line );

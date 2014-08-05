@@ -118,9 +118,9 @@ struct _GameState {
 	Board    *board;
 	long int score;        /* current score */
 	long int bscore;       /* best-score across multiple games */
+	int      iswin;        /* has the sentinel value reached? */
 	int      prevmv;       /* direction of previous move */
 	int      nextmv;       /* direction of next move */
-	int      iswin;        /* has the sentinel value reached? */
 };
 
 /* Private definition of the GSNode "class"
@@ -637,7 +637,7 @@ GameState *new_gamestate_from_text( char *text )
 	board = board_free( board );
 
 	/* from the 1st token, get the state meta-data
-	 * (score, bscore, iswin, prevmv)
+	 * (score, bscore, iswin, prevmv, nextmv)
          */
 	n = sscanf(
 		tokens[0],
