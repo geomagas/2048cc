@@ -610,7 +610,7 @@ static inline int _merge_adjacent_from_beg(
 			continue;
 		}
 		if ( backup[k] == backup[k+1] ) {
-			backup[k] += backup[k+1];
+			backup[k] += backup[k];
 			backup[k+1] = 0;
 			if ( backup[k] <= SENTINEL ) {
 				(*score) += backup[k];
@@ -663,7 +663,7 @@ static inline int _merge_adjacent_from_end(
 			continue;
 		}
 		if ( backup[k] == backup[k-1] ) {
-			backup[k] += backup[k-1];
+			backup[k] += backup[k];
 			backup[k-1] = 0;
 			if ( backup[k] <= SENTINEL ) {
 				(*score) += backup[k];
