@@ -1,7 +1,7 @@
 #define GUI_LOCALE_C
 
 /* gettext related constants */
-#define GETTEXT_PACKAGE  "2048cc_gtk2_viewer" /* our translation text-domain */
+#define GETTEXT_PACKAGE  "2048cc_gtk2_replayer" /* our translation text-domain */
 #define LOCALEDIR        "lang"    /* directory to host translations */
 #define OUTCODESET       "UTF-8"   /* desired output-codeset for translations */
 

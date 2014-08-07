@@ -5,17 +5,17 @@
  * (note that alternatively, POEDIT can be used for steps 2, 3 and 4)
  */
 
-xgettext -k_ -kN_ -d gtk_dice -s -o default.pot gtk_dice.c gui/dice.glade
+xgettext -k_ -kN_ -d 2048cc_gtk2_replayer -s -o default.pot text.c gui/gtk2_replayer.glade
 
-msginit -l el -o gtk_dice.po -i default.pot
+msginit -l el -o gtk2_replayer.po -i default.pot
 or
-msgmerge -s -U gtk_dice.po default.pot
+msgmerge -s -U gtk2_replayer.po default.pot
 
-translate dice.po
+translate gtk2_replayer.po
 
-msgfmt -c -v -o gtk_dice.mo gtk_dice.po
+msgfmt -c -v -o 2048cc_gtk2_replayer.mo gtk2_replayer.po
 
-move gtk_dice.mo to the appropriate directory & set the LANG environment variabale
+move 2048cc_gtk2_replayer.mo to the appropriate directory & set the LANG environment variabale
 
 /* ------------------------------------------------
  * STEP-1:
@@ -23,20 +23,20 @@ move gtk_dice.mo to the appropriate directory & set the LANG environment variaba
  * 	into a Portable Object Template file (.pot)
  * ------------------------------------------------
  */
-xgettext -k_ -kN_ -d gtk_dice -s -o default.pot gtk_dice.c gui/dice.glade
+xgettext -k_ -kN_ -d 2048cc_gtk2_replayer -s -o default.pot text.c gui/gtk2_replayer.glade
 
 /*
  * The above command generates the file "default.pot" from the source
- * files "gtk_dice.c" and "gui/dice.glade". Due to the -k flags, the
+ * files "text.c" and "gui/gtk2_replayer.glade". Due to the -k flags, the
  * generated file "default.pot" will contain all the strings that are
- * enclosed within _() and N_() in the source file "gtk_dice.c", along
+ * enclosed within _() and N_() in the source file "text.c", along
  * with all the strings that are marked as "translatable" in the file:
- * "gui/dice.glade" (which btw is just an XML file, created by Glade).
+ * "gui/gtk2_replayer.glade" (which btw is just an XML file, created by Glade).
  *
  * The -s flag tells 'xgettext' to sort the generated strings in "default.pot".
  * 
  * The -d flag passes the GNU-gettext translation text-domain, which in our
- * case is passed as "gtk_dice" (just the name of our project). This text-domain
+ * case is passed as "2048cc_gtk2_replayer" (just the name of our project). This text-domain
  * along with the desired locale-directory, must have been already defined
  * in the source files *before* including the GLib internationalization
  * header-file: <glib/gi18n.h>.
@@ -47,7 +47,7 @@ xgettext -k_ -kN_ -d gtk_dice -s -o default.pot gtk_dice.c gui/dice.glade
  * according to the documentation of the GNU-gettext & GTK+2 APIs:
  * 	...
  *	/* for libraries, order MATTERS */
- *	#define GETTEXT_PACKAGE	"gtk_dice"	/* our text-domain */
+ *	#define GETTEXT_PACKAGE	"2048cc_gtk2_replayer"	/* our text-domain */
  *	#define LOCALEDIR	"lang"		/* our locale-directory */
  *	#include <glib/gi18n.h>			/* for libs this MUST come last */
  *	...
@@ -75,25 +75,25 @@ xgettext -k_ -kN_ -d gtk_dice -s -o default.pot gtk_dice.c gui/dice.glade
  *	the desired locale.
  * ----------------------------------------------------
  */
-msginit -l el -o gtk_dice.po -i default.pot
+msginit -l el -o gtk2_replayer.po -i default.pot
 
 /*
- * The above command generates the file "gtk_dice.po" (flag -o)
+ * The above command generates the file "gtk2_replayer.po" (flag -o)
  * from the template file "default.pot" (flag -i), with the header
  * inside the former being initialized for the locale "el" (flag -l).
  *
  * The generated file should have the same name with the text-domain
  * we specified in 'xgettext' in Step-1 (plus the ".po" extension).
- * So in our case, it is "gtk_dice.po".
+ * So in our case, it is "gtk2_replayer.po".
  *
  * The specified locale ("el" in this case) should already be installed
  * in the system, because 'msginit' uses it in order to fill-in several
  * fields of the header (such as the character-set, the text-encoding, etc).
  * It also prompts for the email of the translator (probably you) and
- * embeds it too into the header of the file "gtk_dice.po".
+ * embeds it too into the header of the file "gtk2_replayer.po".
  *
  * If the specified locale is not installed, we can always open the 
- * generated file "gtk_dice.po" with a simple text editor, and fill-in
+ * generated file "gtk2_replayer.po" with a simple text editor, and fill-in
  * by hand the required header information (both ".pot" and ".po" files
  * are plain XML files).
  *
@@ -103,10 +103,10 @@ msginit -l el -o gtk_dice.po -i default.pot
  *
  * A much better alternative is POEDIT (http://www.poedit.net/). It has
  * a graphical user interface (GUI) and a native Windows binary. This is
- * actually what I use! I simply load the template file "gtk_dice.pot"
+ * actually what I use! I simply load the template file "gtk2_replayer.pot"
  * into POEDIT, then I fill-in the header info via the tab "Translation
  * Properties" (open it via "Catalog -> Properties") and lastly I use
- * "File -> Save as..." to create the file "gtk_dice.po". 
+ * "File -> Save as..." to create the file "gtk2_replayer.po". 
  */
 
 /* ----------------------------------------------------
@@ -114,10 +114,10 @@ msginit -l el -o gtk_dice.po -i default.pot
  * 	Update an existing Portable Object file (.po).
  * ----------------------------------------------------
  */
-msgmerge -s -U gtk_dice.po default.pot
+msgmerge -s -U gtk2_replayer.po default.pot
 
 /*
- * The above command updates the contents of the file "gtk_dice.po" (flag -U)
+ * The above command updates the contents of the file "gtk2_replayer.po" (flag -U)
  * according to the contents of the file "default.po". This means that the
  * strings found in the latter are added to the former, while any extra
  * strings in the latter are either or marked for comments.
@@ -131,7 +131,7 @@ msgmerge -s -U gtk_dice.po default.pot
  * 	Translate the initialized Portable Object file (.po).
  * ----------------------------------------------------------
  *
- * Translating a Portable Object file ("gtk_dice.po" in our case) may be
+ * Translating a Portable Object file ("gtk2_replayer.po" in our case) may be
  * done with a plain text editor, by translating strings marked as 'msgid'
  * into their corresponding strings marked as 'msgstr'.
  *
@@ -146,17 +146,17 @@ msgmerge -s -U gtk_dice.po default.pot
  *	into the locale directory of our application.
  * ----------------------------------------------------
  */
-msgfmt -c -v -o gtk_dice.mo gtk_dice.po
+msgfmt -c -v -o 2048cc_gtk2_replayer.mo gtk2_replayer.po
 
 /*
- * The above command compiles the Portable Object file "gtk_dice.po",
- * generating the binary Machine Object file "gtk_dice.mo" (flag -o).
+ * The above command compiles the Portable Object file "gtk2_replayer.po",
+ * generating the binary Machine Object file "2048cc_gtk2_replayer.mo" (flag -o).
  * The flag -c enables detailed checking of the .po file format, while
  * the flag -v enables detailed reports (verbose mode).
  *
  * Once again, I much prefer using POEDIT (http://www.poedit.net/) instead,
- * which generates the compiled Machine Object file "gtk_dice.mo" by simply
- * applying "File -> Save..." on the file "gtk_dice.po".
+ * which generates the compiled Machine Object file "2048cc_gtk2_replayer.mo" by simply
+ * applying "File -> Save..." on the file "gtk2_replayer.po".
  * Put in other words, I use POEDIT for Steps 2, 3 and 4.
  *
  * What's important though, is that the name of the compiled .mo file
@@ -164,7 +164,7 @@ msgfmt -c -v -o gtk_dice.mo gtk_dice.po
  * (plus the ".mo" extension of course), in Step-1. Which is in turn exactly
  * the same with the text-domain we have passed as the 1st argument to the
  * functions: bindtextdomain(), bind_textdomain_codeset() and textdomain()
- * inside our source file: "gtk_dice.c" (see Step-1).
+ * inside our source file: "text.c" (see Step-1).
  * 
  */
 
@@ -188,9 +188,9 @@ msgfmt -c -v -o gtk_dice.mo gtk_dice.po
  * we used in Step-2a (e.g. "el" in our case).
  *
  * Then we need to create another sub-directory in it, named "LC_MESSAGES",
- * and copy the Machine Object file "gtk_dice.mo" into it.
+ * and copy the Machine Object file "2048cc_gtk2_replayer.mo" into it.
  *
- * So, the end result will be: ./lang/el/LC_MESSAGES/gtk_dice.mo
+ * So, the end result will be: ./lang/el/LC_MESSAGES/2048cc_gtk2_replayer.mo
  *
  * The last step is to set (or create) the LANG environment variable equal
  * to our locale.
