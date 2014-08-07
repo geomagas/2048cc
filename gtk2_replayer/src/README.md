@@ -70,25 +70,18 @@ would be `C:\gtk2`. The rest of my instructions will assume this folder.
         GTK_HOME = C:\GTK2  
         PKG_CONFIG_PATH = C:\GTK2\LIB\pkgconfig  
 
-  >HINT
-  >
-  >If you don't know how to create/modify environment variables, it's quite easy:
-  - **Windows XP/Vista/7**: right-click on `My Computer` and then select:  
-  `Properties`->`[Advanced]`->`Environment variables...`
-  > 
-<<<<<<< HEAD
-  - **Windows 8/8.1**: Please read [this link]( http://www.7tutorials.com/simple-questions-what-are-environment-variables ).  
-=======
+  If you don't know how to create/modify environment variables, it's quite easy:
+
+  - **Windows XP/Vista/7**: right-click on `My Computer` and then select:
+`Properties`->`[Advanced]`->`Environment variables...`
+
   - **Windows 8/8.1**: Please read [this link]( http://www.7tutorials.com/simple-questions-what-are-environment-variables ).
->>>>>>> 4b8307b4840ff22d6372662ebe0649f0f09a8358
-  >  
-  >  
-  >A window shows up, containing `User variables` and `System variables`.
-  >The former affect the current user, while the latter affect all users
-  >on your machine.
-  >  
-  >  
-  >NOTE  
+
+  A window will show up, containing `User variables` and `System variables`.
+The former affect the current user, while the latter affect all users on your machine.
+
+  >NOTE
+  >
   >My advice is to work your additions/modifications in the `User variables`,
   >thus reducing the risk of screwing up all users if something goes wrong.
 
