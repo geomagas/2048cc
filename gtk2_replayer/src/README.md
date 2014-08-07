@@ -76,7 +76,11 @@ would be `C:\gtk2`. The rest of my instructions will assume this folder.
   - **Windows XP/Vista/7**: right-click on `My Computer` and then select:  
   `Properties`->`[Advanced]`->`Environment variables...`
   > 
+<<<<<<< HEAD
   - **Windows 8/8.1**: Please read [this link]( http://www.7tutorials.com/simple-questions-what-are-environment-variables ).  
+=======
+  - **Windows 8/8.1**: Please read [this link]( http://www.7tutorials.com/simple-questions-what-are-environment-variables ).
+>>>>>>> 4b8307b4840ff22d6372662ebe0649f0f09a8358
   >  
   >  
   >A window shows up, containing `User variables` and `System variables`.
