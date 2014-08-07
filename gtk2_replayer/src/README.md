@@ -58,14 +58,14 @@ On Fedora (e.g. Redhat), you can open a terminal and type: `su -c 'yum install g
 On Windows, the installation is more cumbersome. Here are some simple steps on
 how to do it, that work fine for me:
 
-1. Download the *GTK+2.24.10 all-in-one-bundle for 32-bit Windows* 
+- Download the *GTK+2.24.10 all-in-one-bundle for 32-bit Windows* 
 [zip file]( http://ftp.gnome.org/pub/gnome/binaries/win32/gtk+/2.24/gtk+-bundle_2.24.10-20120208_win32.zip ) (the link is taken directly from the official [GTK+ website]( http://www.gtk.org/download/win32.php )).
 
-2. Extract the contents of the zip-file into any folder you like, but **make sure
+- Extract the contents of the zip-file into any folder you like, but **make sure
 that its full path does not contain any spaces**. A good candidate folder
 would be `C:\gtk2`. The rest of my instructions will assume this folder.
 
-3. Next you need to create the following environment variables: 
+- Next you need to create the following environment variables: 
 
         GTK_HOME = C:\GTK2  
         PKG_CONFIG_PATH = C:\GTK2\LIB\pkgconfig  
@@ -85,7 +85,7 @@ The former affect the current user, while the latter affect all users on your ma
     >My advice is to work your additions/modifications in the `User variables`,
     >thus reducing the risk of screwing up all users if something goes wrong.
 
-4. Add the folder with the GTK+2 binaries `C:\GTK2\bin` to the `PATH` environment
+- Finally, add the folder with the GTK+2 binaries `C:\GTK2\bin` to the `PATH` environment
 variable. Here is [a link]( https://www.java.com/en/download/help/path.xml )
 explaining how to create/modify the `PATH` environment variable on all versions
 of Windows.
@@ -96,7 +96,7 @@ of Windows.
   >variables`. For the reasons I explained in step 3, I much prefer to work
   >with `User variables` instead.
 
-For the steps 3 and 4, if any of the mentioned environment variables already
+For the last two steps, if any of the mentioned environment variables already
 exists on you system, then **DO NOT** delete their previous contents (especially
 if you have decided to go against my advice and you are tweaking the `System
 variables`).
@@ -282,7 +282,7 @@ utility to one or two environment variables, and use those instead.
 
 For example, assuming you have installed GTK+2 in the directory: `C:\gtk2`,
 you can define just once an environment variable like the following (or split
-it in 2 envrironment variables, say: GTK\_CFLAGS and GTK2\_LIBS):
+it in 2 environment variables, say: GTK\_CFLAGS and GTK2\_LIBS):
 
   >GTK2\_COMPILE = -mms-bitfields -IC:/gtk2/include/gtk-2.0 -IC:/gtk2/lib/gtk-2.0/include -IC:/gtk2/include/atk-1.0 -IC:/gtk2/include/cairo -IC:/gtk2/include/gdk-pixbuf-2.0 -IC:/gtk2/include/pango-1.0 -IC:/gtk2/include/glib-2.0 -IC:/gtk2/lib/glib-2.0/include -IC:/gtk2/include -IC:/gtk2/include/freetype2 -IC:/gtk2/include/libpng14 -LC:/gtk2/lib -lgtk-win32-2.0 -lgdk-win32-2.0 -latk-1.0 -lgio-2.0 -lpangowin32-1.0 -lgdi32 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lglib-2.0 -lintl
 
