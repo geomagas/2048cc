@@ -70,18 +70,21 @@ would be `C:\gtk2`. The rest of my instructions will assume this folder.
         GTK_HOME = C:\GTK2  
         PKG_CONFIG_PATH = C:\GTK2\LIB\pkgconfig  
 
-  HINT
+  >HINT
+  >
   >If you don't know how to create/modify environment variables, it's quite easy:
   - **Windows XP/Vista/7**: right-click on `My Computer` and then select:  
-`Properties`->`[Advanced]`->`Environment variables...`
-
-  - **Windows 8/8.1**: Please read [this link]( http://www.7tutorials.com/simple-questions-what-are-environment-variables ).
-
+  `Properties`->`[Advanced]`->`Environment variables...`
+  > 
+  - **Windows 8/8.1**: Please read [this link]( http://www.7tutorials.com/simple-questions-what-are-environment-variables ).  
+  >  
+  >  
   >A window shows up, containing `User variables` and `System variables`.
   >The former affect the current user, while the latter affect all users
   >on your machine.
-
-  NOTE
+  >  
+  >  
+  >NOTE  
   >My advice is to work your additions/modifications in the `User variables`,
   >thus reducing the risk of screwing up all users if something goes wrong.
 
@@ -90,7 +93,8 @@ variable. Here is [a link]( https://www.java.com/en/download/help/path.xml )
 explaining how to create/modify the `PATH` environment variable on all versions
 of Windows.
 
-  NOTE
+  >NOTE  
+  >  
   >The article of the above mentioned link, shows how to tweak the `System
   >variables`. For the reasons I explained in step 3, I much prefer to work
   >with `User variables` instead.
