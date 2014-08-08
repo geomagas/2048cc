@@ -15,8 +15,23 @@
 
 #include <stdbool.h>
 
-/* forward declaration of the Gamedata "class" as an opaque data-type */
+/* Forward declaration of the Gamedata "class" as an opaque data-type. */
 typedef struct _Gamedata Gamedata;
+
+/* Gamedata directions for next & previous moves.
+ * They must start from 0 and sequentially increased by 1,
+ * because they may be used as array subscripts.
+ */
+enum {
+	GAMEDATA_MVDIR_NONE  = 0,
+	GAMEDATA_MVDIR_UP    = 1,
+	GAMEDATA_MVDIR_DOWN  = 2,
+	GAMEDATA_MVDIR_LEFT  = 3,
+	GAMEDATA_MVDIR_RIGHT = 4,
+
+	/* not a direction, just their total count */
+	GAMEDATA_MAX_MVDIRS
+};
 
 #ifndef GAMEDATA_C
 extern Gamedata      *make_gamedata( void );

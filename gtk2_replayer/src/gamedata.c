@@ -32,13 +32,13 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>       /* memset(), memcpy(), strcmp(), strncpy() */
+#include <string.h>            /* memset(), memcpy(), strcmp(), strncpy() */
 #include <stdbool.h>
 
 #include "misc.h"
 #include "gamedata.h"
 
-#define _SZMAX_FLINE  (1023+1)
+#define _SZMAX_FLINE  (1023+1) /* max bytes to handle as file-line */
 
 /* A _GamedataMove corresponds to a single line, being part of a sequence of
  * list-lines that are read from a replay-file (not all lines in a replay-file
@@ -69,10 +69,10 @@ struct _Gamedata
 {
 	/* meta-data */
 	char fname[SZMAX_DBGMSG];  /* name of loaded replay-file */
-	int           didundo;     /* */
-	long int      nmoves;      /* total moves */
-	unsigned long delay;       /* animation delay (secs) */
-	int           gamewon;     /* was this game won? */
+	int            didundo;    /* has the player un-done at least 1 move?*/
+	long int       nmoves;     /* total moves */
+	unsigned long  delay;      /* animation delay (secs) */
+	int            gamewon;    /* was this game won? */
 
 	/* dynamic array of the actual moves */
 	_GamedataMove  *moves;
@@ -146,7 +146,7 @@ void dbg_gamedata_print_tiles( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
- * (Destructor) _GamedataMove *_moves_free():
+ * (Private Destructor) _GamedataMove *_moves_free():
  *
  * Release all resources occupied by the first (nmoves) elements
  * of the specified dynamic array of moves (moves).
@@ -167,7 +167,7 @@ _GamedataMove *_moves_free( _GamedataMove *moves, int nmoves )
 }
 
 /* ---------------------------------------------------
- * (Constructor) _GamedataMove *_new_moves_from_fp():
+ * (Private Constructor) _GamedataMove *_new_moves_from_fp():
  *
  * Starting at a valid file-pointer (fp), opened in binary-mode,
  * create and return a pointer to a dynamic array consisting of
@@ -304,7 +304,7 @@ ret_failure:
  *    is important, we must pass a copy of it into this function.
  * ---------------------------------------------------
  */
-bool _copy( Gamedata *dst, const Gamedata *src )
+static inline bool _copy( Gamedata *dst, const Gamedata *src )
 {
 	/* sanity checks */
 	if ( NULL == dst || NULL == src ) {
@@ -395,7 +395,13 @@ Gamedata *gamedata_free( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
+ * (Constructor) Gamedata *make_gamedata():
  *
+ * Reserve zero'ed memory for a game-data object,
+ * and return a pointer to it, or NULL on error.
+ *
+ * NOTE: On success, the caller should initialize
+ *       the object with sensible values.
  * ---------------------------------------------------
  */
 Gamedata *make_gamedata( void )
@@ -409,7 +415,34 @@ Gamedata *make_gamedata( void )
 }
 
 /* ---------------------------------------------------
+ * bool _fp_skip_list():
  *
+ * Given a valid pointer to a file opened in binary-mode
+ * (fp), and given that this file pointer already points
+ * to the start of the 1st line in a list of move-lines,
+ * skip all subsequent lines until the list gets exhausted.
+ * Return false on error, true otherwise.
+ *
+ * NOTES:
+ *     Replay-files contain, among other things, lists of
+ *     moves (lines) for the Undo, the Redo and the Replay
+ *     lists. If any of those lists is empty, then it is
+ *     represented inside the file with just one line:
+ *     "NULL:\r\n"
+ *
+ *     This function is used by the function: gamedata_set_from_fname()
+ *     for skipping the Undo and the Redo lists (one at a time),
+ *     since they are useless to the replayer.
+ *
+ *     It knows how many lines to skip, because the total
+ *     count of lines in a list is recorded at the start
+ *     of the 1st line of the list (this count decreases
+ *     sequentially in subsequent lines).
+ *
+ *     As a final note, the function uses s_fgets() to skip
+ *     a line, which contrary to fgets() it drops the EOL
+ *     sequence. So when checking for empty lists, we simply
+ *     compare against "NULL:" (instead of "NULL:\r\n").
  * ---------------------------------------------------
  */
 static inline bool _fp_skip_list( FILE *fp )
@@ -446,7 +479,17 @@ static inline bool _fp_skip_list( FILE *fp )
 }
 
 /* ---------------------------------------------------
+ * (Initializer) bool gamedata_set_from_fname():
  *
+ * Given a pointer to an already allocated game-data object (gd),
+ * and the filename of an existing replay-file (fname), initialize
+ * the game-data object according to the values stored inside the
+ * replay-file. Return false on error, true otherwise.
+ *
+ * NOTES: This function is actually the replay-file parser.
+ *        It uses the functions: _new_moves_from_fp() and
+ *        _fp_skip_list(), so you may want to have a look
+ *        at them too.
  * ---------------------------------------------------
  */
 bool gamedata_set_from_fname( Gamedata *gd, const char *fname )
@@ -464,8 +507,9 @@ bool gamedata_set_from_fname( Gamedata *gd, const char *fname )
 	}
 
 	/*
-	 * IMPORTANT: Open fname for reading in BINARY mode
-	 *            so my own s_fgets() will work as expected.
+	 * IMPORTANT!
+	 * Open fname for reading in BINARY mode,
+	 * so that s_fgets() will work as expected.
 	 */
 	fp = fopen( fname, "rb" );
 	if ( NULL == fp ) {
@@ -551,7 +595,13 @@ ret_failure:
 }
 
 /* ---------------------------------------------------
+ * (Getter) char *gamedata_get_fname():
  *
+ * Return a pointer to the current fname c-string field of
+ * the specified game-data object (gd), or NULL on error.
+ *
+ * NOTE: The fname c-string reflects the filename
+ *       of the currently loaded replay-file.
  * ---------------------------------------------------
  */
 char *gamedata_get_fname( Gamedata *gd )
@@ -564,7 +614,15 @@ char *gamedata_get_fname( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
+ * (Getter) int gamedata_get_didundo():
  *
+ * Return the current boolean value of the didundo field,
+ * of the specified game-data object (gd), or 0 (false)
+ * on error.
+ * 
+ * NOTE: The didundo field dictates whether the player
+ *       has un-done at least one move in the recorded
+ *       game.
  * ---------------------------------------------------
  */
 int gamedata_get_didundo( Gamedata *gd )
@@ -573,11 +631,18 @@ int gamedata_get_didundo( Gamedata *gd )
 		DBG_STDERR_MSG( "NULL pointer argument (gd) !");
 		return 0;  /* false */
 	}
-	return gd->didundo;  /* true */
+	return gd->didundo;
 }
 
 /* ---------------------------------------------------
+ * (Getter) long int gamedata_get_nmoves():
  *
+ * Return the current value of the nmoves field,
+ * of the specified game-data object (gd), or 0
+ * on error.
+ * 
+ * NOTE: The nmoves field holds the total count
+ *       of moves available in the recorded game.
  * ---------------------------------------------------
  */
 long int gamedata_get_nmoves( Gamedata *gd )
@@ -590,7 +655,17 @@ long int gamedata_get_nmoves( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
+ * (Getter) int gamedata_get_dim():
  *
+ * Return the current value of the dim field, of the
+ * specified game-data object (gd), or 0 on error.
+ * 
+ * NOTES:
+ *     The dim field holds the single-dimension
+ *     of the square board, in the recorded game.
+ *
+ *     This info is available in every single move,
+ *     so we simply return it from the first one.
  * ---------------------------------------------------
  */
 int gamedata_get_dim( Gamedata *gd )
@@ -609,7 +684,17 @@ int gamedata_get_dim( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
+ * (Getter) int gamedata_get_sentinel():
  *
+ * Return the current value of the sentinel field, of
+ * the specified game-data object (gd), or 0 on error.
+ * 
+ * NOTES:
+ *     The sentinel field holds the value of
+ *     the winning tile, in the recorded game.
+ *
+ *     This info is available in every single move,
+ *     so we simply return it from the first one.
  * ---------------------------------------------------
  */
 int gamedata_get_sentinel( Gamedata *gd )
@@ -628,7 +713,18 @@ int gamedata_get_sentinel( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
+ * (Getter) int gamedata_get_nrandom():
  *
+ * Return the current value of the nrandom field, of
+ * the specified game-data object (gd), or 0 on error.
+ * 
+ * NOTES:
+ *     The nrandom field holds the count of randomly
+ *     spawned tiles after every successful move, in
+ *     the recorded game.
+ *
+ *     This info is available in every single move,
+ *     so we simply return it from the first one.
  * ---------------------------------------------------
  */
 int gamedata_get_nrandom( Gamedata *gd )
@@ -647,7 +743,13 @@ int gamedata_get_nrandom( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
+ * (Getter) unsigned long int gamedata_get_delay():
  *
+ * Return the current value of the delay field, of
+ * the specified game-data object (gd), or 0 on error.
+ * 
+ * NOTE: The delay field holds the replay playback
+ *       delay in milliseconds, for the recorded game.
  * ---------------------------------------------------
  */
 unsigned long int gamedata_get_delay( Gamedata *gd )
@@ -660,7 +762,14 @@ unsigned long int gamedata_get_delay( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
+ * (Getter) int gamedata_get_gamewon():
  *
+ * Return the current boolean value of the gamewon field,
+ * of the specified game-data object (gd), or 0 (false)
+ * on error.
+ * 
+ * NOTE: The gamewon field dictates whether the
+ *       recorded game has been won by the player.
  * ---------------------------------------------------
  */
 int gamedata_get_gamewon( Gamedata *gd )
@@ -673,7 +782,12 @@ int gamedata_get_gamewon( Gamedata *gd )
 }
 
 /* ---------------------------------------------------
+ * (Getter) long int gamedata_get_tile_of_move():
  *
+ * Given a pointer to a game-data object (gd), the index
+ * of a recorded move (imove) inside the object, and the
+ * index of a tile (itile) in the board of the recorded
+ * move, return the value of the tile, or 0 on error.
  * ---------------------------------------------------
  */
 long int gamedata_get_tile_of_move( Gamedata *gd, int itile, long int imove )
@@ -687,8 +801,17 @@ long int gamedata_get_tile_of_move( Gamedata *gd, int itile, long int imove )
 		DBG_STDERR_MSG( "gd->moves is NULL!");
 		return 0;
 	}
+	if ( imove < 0 || imove > gd->nmoves - 1 ) {
+		DBG_STDERR_MSG( "Invalid imove!");
+		return 0;
+	}
 	if ( NULL == gd->moves[imove].tiles ) {
 		DBG_STDERR_MSG( "gd->moves[imove].tiles is NULL!");
+		return 0;
+	}
+	const int len = gd->moves[0].dim * gd->moves[0].dim;
+	if ( itile < 0 || itile > len-1 ) {
+		DBG_STDERR_MSG( "Invalid itile!");
 		return 0;
 	}
 
@@ -696,7 +819,12 @@ long int gamedata_get_tile_of_move( Gamedata *gd, int itile, long int imove )
 }
 
 /* ---------------------------------------------------
+ * (Getter) long int gamedata_get_score_of_move():
  *
+ * Given a pointer to a game-data object (gd), and the
+ * index of a recorded move (imove) inside the object,
+ * return the score value of the recorded move, or 0
+ * on error.
  * ---------------------------------------------------
  */
 long int gamedata_get_score_of_move( Gamedata *gd, long int imove )
@@ -723,7 +851,12 @@ long int gamedata_get_score_of_move( Gamedata *gd, long int imove )
 }
 
 /* ---------------------------------------------------
+ * (Getter) long int gamedata_get_bestscore_of_move():
  *
+ * Given a pointer to a game-data object (gd), and the
+ * index of a recorded move (imove) inside the object,
+ * return the best-score value of the recorded move,
+ * or 0 on error.
  * ---------------------------------------------------
  */
 long int gamedata_get_bestscore_of_move( Gamedata *gd, long int imove )
@@ -750,54 +883,74 @@ long int gamedata_get_bestscore_of_move( Gamedata *gd, long int imove )
 }
 
 /* ---------------------------------------------------
+ * (Getter) int gamedata_get_prevmv_of_move():
  *
+ * Given a pointer to a game-data object (gd), and the
+ * index of a recorded move (imove) inside the object,
+ * return the enumerated direction value of the prevmv
+ * field of the recorded move, or GAMEDATA_MVDIR_NONE
+ * on error.
+ *
+ * NOTE: The prevmv field describes the direction at
+ *       which the board was played in the previous
+ *       move.
  * ---------------------------------------------------
  */
 int gamedata_get_prevmv_of_move( Gamedata *gd, long int imove )
 {
 	if ( NULL == gd ) {
 		DBG_STDERR_MSG( "NULL pointer argument (gd) !");
-		return 0;
+		return GAMEDATA_MVDIR_NONE;
 	}
 
 	if ( NULL == gd->moves ) {
 		DBG_STDERR_MSG( "gd->moves is NULL!");
-		return 0;
+		return GAMEDATA_MVDIR_NONE;
 	}
 
 	if ( imove < -1 || imove > gd->nmoves - 1 ) {
 		DBG_STDERR_MSG( "invalid imove!");
-		return 0;
+		return GAMEDATA_MVDIR_NONE;
 	}
 	else if ( imove == -1 ) {
-		return 0;
+		return GAMEDATA_MVDIR_NONE;
 	}
 
 	return gd->moves[imove].prevmv;
 }
 
 /* ---------------------------------------------------
+ * (Getter) int gamedata_get_prevmv_of_move():
  *
+ * Given a pointer to a game-data object (gd), and the
+ * index of a recorded move (imove) inside the object,
+ * return the enumerated direction value of the nextmv
+ * field of the recorded move, or GAMEDATA_MVDIR_NONE
+ * on error.
+ *
+ * NOTE: The nextmv field describes the direction at
+ *       which the board was played for yielding the
+ *       next move.
  * ---------------------------------------------------
  */
 int gamedata_get_nextmv_of_move( Gamedata *gd, long int imove )
 {
 	if ( NULL == gd ) {
 		DBG_STDERR_MSG( "NULL pointer argument (gd) !");
-		return 0;
+		return GAMEDATA_MVDIR_NONE;
 	}
 
 	if ( NULL == gd->moves ) {
 		DBG_STDERR_MSG( "gd->moves is NULL!");
-		return 0;
+		return GAMEDATA_MVDIR_NONE;
 	}
 
 	if ( imove < -1 || imove > gd->nmoves - 1 ) {
 		DBG_STDERR_MSG( "invalid imove!");
-		return 0;
+		return GAMEDATA_MVDIR_NONE;
 	}
 	else if ( imove == -1 ) {
-		return 0;
+		return GAMEDATA_MVDIR_NONE;
 	}
 
 	return gd->moves[imove].nextmv;

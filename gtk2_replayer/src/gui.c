@@ -1942,7 +1942,7 @@ gboolean _refresh_tbar_playback( Gui *gui )
 gboolean _refresh_prevnext( Gui *gui )
 {
 	GdkPixbuf *pixbuf = NULL;
-	char *fnames[] = {
+	char *fnames[GAMEDATA_MAX_MVDIRS] = {
 		DIR_GUI"imgNomove.png",
 		DIR_GUI"imgUp.png",
 		DIR_GUI"imgDown.png",

@@ -5,7 +5,7 @@
  * (note that alternatively, POEDIT can be used for steps 2, 3 and 4)
  */
 
-xgettext -k_ -kN_ -d 2048cc_gtk2_replayer -s -o default.pot text.c gui/gtk2_replayer.glade
+xgettext -k_ -kN_ -d 2048cc_gtk2_replayer -s -o default.pot text.h gui/gtk2_replayer.glade
 
 msginit -l el -o gtk2_replayer.po -i default.pot
 or
@@ -15,7 +15,7 @@ translate gtk2_replayer.po
 
 msgfmt -c -v -o 2048cc_gtk2_replayer.mo gtk2_replayer.po
 
-move 2048cc_gtk2_replayer.mo to the appropriate directory & set the LANG environment variabale
+move 2048cc_gtk2_replayer.mo to the appropriate directory & set the LANG environment variable
 
 /* ------------------------------------------------
  * STEP-1:
@@ -23,13 +23,13 @@ move 2048cc_gtk2_replayer.mo to the appropriate directory & set the LANG environ
  * 	into a Portable Object Template file (.pot)
  * ------------------------------------------------
  */
-xgettext -k_ -kN_ -d 2048cc_gtk2_replayer -s -o default.pot text.c gui/gtk2_replayer.glade
+xgettext -k_ -kN_ -d 2048cc_gtk2_replayer -s -o default.pot text.h gui/gtk2_replayer.glade
 
 /*
  * The above command generates the file "default.pot" from the source
- * files "text.c" and "gui/gtk2_replayer.glade". Due to the -k flags, the
+ * files "text.h" and "gui/gtk2_replayer.glade". Due to the -k flags, the
  * generated file "default.pot" will contain all the strings that are
- * enclosed within _() and N_() in the source file "text.c", along
+ * enclosed within _() and N_() in the source file "text.h", along
  * with all the strings that are marked as "translatable" in the file:
  * "gui/gtk2_replayer.glade" (which btw is just an XML file, created by Glade).
  *
@@ -164,7 +164,7 @@ msgfmt -c -v -o 2048cc_gtk2_replayer.mo gtk2_replayer.po
  * (plus the ".mo" extension of course), in Step-1. Which is in turn exactly
  * the same with the text-domain we have passed as the 1st argument to the
  * functions: bindtextdomain(), bind_textdomain_codeset() and textdomain()
- * inside our source file: "text.c" (see Step-1).
+ * inside our source file: "text.h" (see Step-1).
  * 
  */
 
