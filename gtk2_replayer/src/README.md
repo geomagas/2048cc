@@ -225,7 +225,7 @@ Providing a shell capable of interpreting backticks is available, compiling a
 GTK+2 *hello.c* source file using `gcc` and the `pkg-config` utility, is greatly
 simplified into the following line:
 
-    gcc hello.c `pkg-config --cflags --libs gtk+-2.0`
+    gcc hello.c `pkg-config --cflags --libs gtk+-2.0`  
 
 As described in the section *["Installing a GCC/MinGW-GCC Tool Chain"]( #gcc_toolchain )*,
 on Windows you need a replacement of the native command-prompt, capable of
@@ -247,31 +247,51 @@ sources. Otherwise the compilation will fail. As a side note, the `gui` director
 must also be in the same path with the produced executable (actually, that's
 the reason why I have included it twice in the distribution zip-file).
 
+Debug vs Release Builds
+-----------------------
+
+You may use the boolean global variable `global_debugOn`, defined in `main.c`,
+in order to control whether the executable will print or not debugging
+information and errors on the `stderr` stream (this is typically the same as
+`stdout` on most platforms).
+
+The value of `global_debugOn` is set to `true` in the beginning of the `main()`
+function, ready for debug-builds. For release-builds, set t to `false` before
+compiling the sources.
+
+
 On Linux
 --------
 
-Open a terminal, navigate to the main directory of the GTK2 Replayer, and type:
+Open a terminal, navigate into the `src/` directory of the GTK2 Replayer, and
+depending on the desired build, type one of the following commands:
 
-    cd src
-    gcc -std=c99 -O3 *.c `pkg-config --cflags --libs gtk+-2.0`
+- **for release-builds ( `global_debugOn = false` )**  
+gcc \*.c -std=c99 -O3 \`pkg-config --cflags --libs gtk+-2.0\`
+
+- **for debug-builds ( `global_debugOn = true` )**  
+gcc \*.c -std=c99 -g3 -pedantic -Wall -Wextra \`pkg-config --cflags --libs gtk+-2.0\`
 
 The executable file `a.out` will be created. You may run it by typing: `./a.out`
 
 On Windows
 --------
 
-**Using MSYS**
+**Using the MSYS shell**
 
-Open an `MSYS` window, navigate to the main directory of the GTK2 Replayer,
-and type:
+Open an `MSYS` window, navigate into the `src/` directory of the GTK2 Replayer,
+and depending on the desired build, type one of the following commands:
 
-    cd src
-    gcc -std=c99 -O3 *.c -o gtk2_player.exe `pkg-config --cflags --libs gtk+-2.0`
+- **for release-builds ( `global_debugOn = false` )**  
+gcc -o gtk2_player.exe \*.c -std=c99 -O3 \`pkg-config --cflags --libs gtk+-2.0\` -mwindows
+
+- **for debug-builds ( `global_debugOn = false` )**  
+gcc -o gtk2_player.exe \*.c std=c99 -g3 -pedantic -Wall -Wextra \`pkg-config --cflags --libs gtk+-2.0\`
 
 The executable file `gtk2_player.exe` will be created. You may run it by typing:
-`./gtk2_player.exe`  (or by double-clicking on its icon).
+`./gtk2_player.exe` or by double-clicking on its icon.
 
-**Using the native command prompt**
+**Using the native Command Prompt**
 
 You may also compile the sources from the Window's native command-prompt, by
 adding manually to the command-line of `gcc` the output of the `pkg-config`
@@ -282,19 +302,23 @@ utility to one or two environment variables, and use those instead.
 
 For example, assuming you have installed GTK+2 in the directory: `C:\gtk2`,
 you can define just once an environment variable like the following (or split
-it in 2 environment variables, say: GTK\_CFLAGS and GTK2\_LIBS):
+it in 2 environment variables, say: GTK2\_CFLAGS and GTK2\_LIBS):
 
   >GTK2\_COMPILE = -mms-bitfields -IC:/gtk2/include/gtk-2.0 -IC:/gtk2/lib/gtk-2.0/include -IC:/gtk2/include/atk-1.0 -IC:/gtk2/include/cairo -IC:/gtk2/include/gdk-pixbuf-2.0 -IC:/gtk2/include/pango-1.0 -IC:/gtk2/include/glib-2.0 -IC:/gtk2/lib/glib-2.0/include -IC:/gtk2/include -IC:/gtk2/include/freetype2 -IC:/gtk2/include/libpng14 -LC:/gtk2/lib -lgtk-win32-2.0 -lgdk-win32-2.0 -latk-1.0 -lgio-2.0 -lpangowin32-1.0 -lgdi32 -lpangocairo-1.0 -lgdk_pixbuf-2.0 -lpango-1.0 -lcairo -lgobject-2.0 -lgmodule-2.0 -lgthread-2.0 -lglib-2.0 -lintl
 
-You may now compile the sources of the **2048cc GTK2 Replayer** directly from
-the Windows' native command-prompt. Navigate to the main directory of the
-replayer, and type:
+You may now compile the sources directly from the Windows' native command-prompt.
 
-    cd src
-    gcc -std=c99 -O3 *.c -o gtk2_player.exe %GTK2_COMPILE%
+Navigate into the `src/` directory of the GTK2 Replayer, and depending on the
+desired build, type one of the following commands:
+
+- **for release-builds ( `global_debugOn = false` )**  
+gcc -o gtk2\_player.exe \*.c -std=c99 -O3 %GTK2_COMPILE% -mwindows
+
+- **for debug-builds ( `global_debugOn = false` )**  
+gcc -o gtk2\_player.exe \*.c std=c99 -g3 -pedantic -Wall -Wextra %GTK2_COMPILE%
 
 The executable file `gtk2_player.exe` will be created. You may run it by typing:
-`gtk2_player.exe` (or by double-clicking on its icon).
+`gtk2_player.exe` or by double-clicking on its icon.
 
   NOTE
   >If you don't know how to define environment variables, please see the *Windows*
