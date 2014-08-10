@@ -34,9 +34,14 @@ enum {
 };
 
 #ifndef GAMEDATA_C
-extern Gamedata      *make_gamedata( void );
-extern Gamedata      *gamedata_free( Gamedata *gd );
+extern Gamedata      *make_gamedata( void );         /* constructor */
+extern bool          gamedata_set_from_fname(        /* initializer */
+                           Gamedata *gd,
+                           const char *fname
+			   );
+extern Gamedata      *gamedata_free( Gamedata *gd ); /* destructor */
 
+/* getters */
 extern char          *gamedata_get_fname( Gamedata *gd );
 extern int           gamedata_get_didundo( Gamedata *gd );
 extern long int      gamedata_get_nmoves( Gamedata *gd );
@@ -66,16 +71,13 @@ extern int           gamedata_get_nextmv_of_move(
                            Gamedata *gd,
                            long int imove
                            );
-
+/* debug */
 extern void          dbg_gamedata_print_tiles_of_move(
                            Gamedata *gd,
                            long int imove
                            );
 extern void          dbg_gamedata_print_tiles( Gamedata *gd );
 
-extern bool          gamedata_set_from_fname(
-			   Gamedata *gd, const char *fname
-			   );
 #endif
 
 #endif
