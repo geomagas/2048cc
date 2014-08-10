@@ -1,6 +1,7 @@
 2048cc GTK2 Replayer - Sources
 ==============================
 
+**Project**: 2048cc GTK2 Replayer  
 **Initial author**: [migf1](mailto:mig_f1@hotmail.com)  
 **Latest version**: 0.2a (August 7, 2014)  
 **License**: Open-source, Free-software, with the limitations specified in the
@@ -13,9 +14,12 @@ source code of the GTK2 Replayer is still in 1st-draft state. I will be
 gradually cleaning it up, adding appropriate comments, and removing outdated
 ones.
 
-This file is provided for helping you compile the sources yourselves on Windows
+This document is provided for helping you **compile the sources yourselves** on Windows
 and Linux (and possibly giving you hints for other platforms too, like MacOSX
 or Unix).
+
+If you are interested in contributing to the project, or just browsing through
+the code, please read the file [BROWSING.md](../BROWSING.md) with your favorite browser.
 
 Prerequisites
 =============
