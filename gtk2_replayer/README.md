@@ -26,8 +26,9 @@ To run it, the **GTK+2.24.10 runtime** must be already installed on your system
 find convenient installers at the dedicated for this purpose **[website](  http://gtk-win.sourceforge.net/home/index.php/Main/Downloads )**, or directly
 from their **[sourceforge account](  http://sourceforge.net/projects/gtk-win/files/GTK%2B%20Runtime%20Environment/GTK%2B%202.24/ )**.
 
-On other platforms, you can compile the sources. Please refer to the **src/README.md**
-file, for details and compilation instructions on several platforms.
+On other platforms, you can compile the sources. Please refer to the document
+[src/README.md](./src/README.md) for instructions on how to do that on Windows
+and Linux (and possibly on other platforms too).
 
 
 User Guide
