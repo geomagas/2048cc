@@ -15,13 +15,33 @@
 
 #include <stdbool.h>
 
-/* forward declaration of the Gamedata "class" as an opaque data-type */
+/* Forward declaration of the Gamedata "class" as an opaque data-type. */
 typedef struct _Gamedata Gamedata;
 
-#ifndef GAMEDATA_C
-extern Gamedata      *make_gamedata( void );
-extern Gamedata      *gamedata_free( Gamedata *gd );
+/* Gamedata directions for next & previous moves.
+ * They must start from 0 and sequentially increased by 1,
+ * because they may be used as array subscripts.
+ */
+enum {
+	GAMEDATA_MVDIR_NONE  = 0,
+	GAMEDATA_MVDIR_UP    = 1,
+	GAMEDATA_MVDIR_DOWN  = 2,
+	GAMEDATA_MVDIR_LEFT  = 3,
+	GAMEDATA_MVDIR_RIGHT = 4,
 
+	/* not a direction, just their total count */
+	GAMEDATA_MAX_MVDIRS
+};
+
+#ifndef GAMEDATA_C
+extern Gamedata      *make_gamedata( void );         /* constructor */
+extern bool          gamedata_set_from_fname(        /* initializer */
+                           Gamedata *gd,
+                           const char *fname
+			   );
+extern Gamedata      *gamedata_free( Gamedata *gd ); /* destructor */
+
+/* getters */
 extern char          *gamedata_get_fname( Gamedata *gd );
 extern int           gamedata_get_didundo( Gamedata *gd );
 extern long int      gamedata_get_nmoves( Gamedata *gd );
@@ -51,16 +71,13 @@ extern int           gamedata_get_nextmv_of_move(
                            Gamedata *gd,
                            long int imove
                            );
-
+/* debug */
 extern void          dbg_gamedata_print_tiles_of_move(
                            Gamedata *gd,
                            long int imove
                            );
 extern void          dbg_gamedata_print_tiles( Gamedata *gd );
 
-extern bool          gamedata_set_from_fname(
-			   Gamedata *gd, const char *fname
-			   );
 #endif
 
 #endif
