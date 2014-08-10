@@ -19,7 +19,7 @@ and Linux (and possibly giving you hints for other platforms too, like MacOSX
 or Unix).
 
 If you are interested in contributing to the project, or just browsing through
-the code, please read the file [BROWSING.md](../BROWSING.md) with your favorite browser.
+the code, please read the file **BROWSING.md** with your favorite browser.
 
 Prerequisites
 =============

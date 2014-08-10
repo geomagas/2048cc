@@ -27,9 +27,8 @@ find convenient installers at the dedicated for this purpose **[website](  http:
 from their **[sourceforge account](  http://sourceforge.net/projects/gtk-win/files/GTK%2B%20Runtime%20Environment/GTK%2B%202.24/ )**.
 
 On other platforms, you can compile the sources. Please refer to the document
-[src/README.md](./src/README.md) for instructions on how to do that on Windows
-and Linux (and possibly on other platforms too).
-
+**src/README.md** for instructions on how to do that on Windows and Linux (and
+possibly on other platforms too).
 
 User Guide
 ==========
