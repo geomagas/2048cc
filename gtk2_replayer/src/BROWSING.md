@@ -15,7 +15,8 @@ gradually cleaning it up, adding appropriate comments, and removing outdated
 ones.
 
 This document is meant as a starting point to help you browsing through the
-source-code.
+source-code. I may be also be useful if you decide to contribute to the project,
+or fork it for independent development.
 
 Classes
 =======
@@ -347,10 +348,17 @@ from runtime overhead due to excessive spacing.
   - *Operators* have a space before and a space after them, unless the
 expression is too long (see the [Note](#spacing_note), below).
 
-  - <a name="pointer_definitions"></a>*pointer definitions & declarations* have the dereferencing symbol prepended
+  - <a name="pointer_definitions"></a>*Pointer definitions & declarations* have the dereferencing symbol prepended
 to the pointer name, not appended to the pointer type.
     ```cpp
     int *p; // not int* p;
+    ```
+
+  - *Function names* are **not** separated from the opening parenthesis of their
+argument & parameter lists.
+    ```cpp
+    int foo( void )   // preferred
+    int foo ( void )  // avoid this, it will bite you if foo is a macro
     ```
 
   - *Argument & parameter lists* have a space after their opening parenthesis,
@@ -365,9 +373,9 @@ the code that follows them.
 
   - *Compound statement starting-keywords* such as `if`, `else if`, `switch`,
 `for`, `while`, `do`, etc, are followed by a space (the `switch` statement
-may be exempted).  
+may be exempted).
 
-    <a name="compound_parentheses_spacing"></a>Furthermore, if they utilize parenthesized controlling expressions, then there
+      <a name="compound_parentheses_spacing"></a>Furthermore, if they utilize parenthesized controlling expressions, then there
 is a space after the opening parenthesis, and a space before the closing parenthesis
 (the `for` statement may be exempted) unless they are too long (see the [Note](#spacing_note), below).
 
@@ -409,8 +417,8 @@ above:
           else {
                   size_t len = strlen( s2 ) - 1;  /* exclude '\n' */
                   for (size_t i=0; i < len; i++) {
-                          printf( "%c"\n", s2[i] );
-                 }
+                          printf( "%c\n", s2[i] );
+                  }
           }
   
           /* cleanup & exit */
@@ -419,8 +427,8 @@ above:
   }
   ```
 
-- As already shown with the `fgets()` and `strcmp()` functions in the snippet above,
-**constants are put on the left hand side of equality checks**.  
+- As already shown with the `calloc()`, `fgets()` and `strcmp()` functions in
+the snippet above, **constants are put on the left hand side of equality checks**.
 
 - <a name="lines_indent"></a>**Lines indentation** is done with tabs (not spaces), set to 8 characters per
 tab. Any further indentation within a line (e.g. for an inline comment) is done
