@@ -417,7 +417,7 @@ GtkWidget *gui_dialogs_get_jumpto_te( GuiDialogs *dialogs )
  */
 gboolean gui_dialogs_do_jumpto( GuiDialogs *dialogs, Gui *gui )
 {
-	extern int errno;
+//	extern int errno;
 
 	gboolean ret    = TRUE;          /* function's return value */
 	GtkWidget *appWindow = NULL;     /* application's main window */

@@ -1,3 +1,24 @@
+/****************************************************************
+ * This file is part of the "2048cc GTK+2 Replayer".
+ *
+ * Copyright:    2014 (c) migf1 <mig_f1@hotmail.com>
+ * License:      Free Software (see comments in main.c for limitations)
+ * Dependencies: glib/gi18n.h
+ * --------------------------------------------------------------
+ *
+ * This header file contains all the translatable strings of the project.
+ * Initially it was meant to host translatable strings of both gui and
+ * non-gui related files, but it turned out that the latter do not output
+ * any text at all. Most probably, the file-name will be changed to
+ * something like gui_text.h or gui_strings.h in the future.
+ *
+ * The TXT_ prefix indicates plain text.
+ * The TXTF_ prefix indicates text containing variable place-holders
+ * ( a-la printf() ) to be filled-in with snprintf() or g_snprintf()
+ * before outputting.
+ ****************************************************************
+ */
+
 #ifndef TEXT_H
 #define TEXT_H
 
@@ -5,7 +26,7 @@
 
 /* GUI strings that are dynamically added/updated,
  * regardless their initial values specified in
- * the Glade file: FNAME_GLADE.
+ * the Glade file.
  * Only those enclosed in _() are translatable.
  */
 #define TXT_APP_NAME              _("GTK2 Replayer")
@@ -21,6 +42,7 @@
 #define TXT_YES                   _("Yes")
 #define TXT_NO                    _("No")
 
+/* used in gtk_label_set_markup() for displaying the current score */
 #define TXTF_MARKUP_SCORE                                               \
 _(                                                                      \
 	"<span font=\"8\" foreground=\"#eee4da\">SCORE</span>\n"        \
@@ -29,6 +51,7 @@ _(                                                                      \
 	"</span>"                                                       \
 )
 
+/* used in gtk_label_set_markup() for displaying the current best-score */
 #define TXTF_MARKUP_BSCORE                                              \
 _(                                                                      \
 	"<span font=\"8\" foreground=\"#eee4da\">BEST</span>\n"         \
@@ -57,6 +80,7 @@ _(                                                                       \
 #define TXTF_DLG_JUMPTO_CURRENT   "%ld"
 #define TXTF_DLG_JUMPTO_SUGGEST   "%ld"
 
+/* all the info displayed in the status-bar */
 #define TXTF_STATUSBAR                                   \
 _(                                                       \
 	" %s | T: %ld | B: %dx%d | ST: %ld |"            \
@@ -79,10 +103,10 @@ _(                                                       \
 	"valid replay-file at all."                      \
 )
 
-#endif
-
 #define TXT_ERR_NO_PROPER_LOCALE                         \
 _(                                                       \
 	"No proper locale environment found.  \n"        \
 	"ENGLISH is used as fallback language."          \
 )
+
+#endif
