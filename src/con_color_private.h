@@ -961,7 +961,7 @@ do {                                                                    \
 		if ( INVALID_HANDLE_VALUE == g_conout.handle ) {         \
 			errPRINTF(                                       \
 				"*** CONOUT_LL_INIT() failed: %d! ***\n",\
-				GetLastError()                           \
+				(int)GetLastError()                      \
 				);                                       \
 			break;                                           \
 		}                                                        \
@@ -971,7 +971,7 @@ do {                                                                    \
 		){                                                       \
 			errPRINTF(                                       \
 				"*** CONOUT_LL_INIT() failed: %d! ***\n",\
-				GetLastError()                           \
+				(int)GetLastError()                      \
 				);                                       \
 			break;                                           \
 		}                                                        \
@@ -1010,7 +1010,7 @@ do {                                                                    \
 		){                                                       \
 			errPRINTF(                                       \
 				"*** CONOUT_RESTORE() failed: %d! ***\n",\
-				GetLastError()                           \
+				(int)GetLastError()                      \
 				);                                       \
 			break;                                           \
 		}                                                        \
@@ -1072,7 +1072,7 @@ do {                                                                    \
 		){                                                       \
 			errPRINTF(                                       \
 				"*** CONOUT_RESET() failed: %d! ***\n",  \
-				GetLastError()                           \
+				(int)GetLastError()                      \
 				);                                       \
 			break;                                           \
 		}                                                        \
@@ -1194,7 +1194,7 @@ do {                                                                    \
 		{                                                        \
 			errPRINTF(                                       \
 				"*** CONOUT_SET_FG() failed, with Win32 API exit code %d!\n",\
-				GetLastError()                           \
+				(int)GetLastError()                      \
 				);                                       \
 			break;                                           \
 		}                                                        \
@@ -1232,7 +1232,7 @@ do {                                                                    \
 		{                                                        \
 			errPRINTF(                                       \
 				"*** CONOUT_SET_BG() failed, with Win32 API exit code %d!\n",\
-				GetLastError()                           \
+				(int)GetLastError()                      \
 				);					 \
 			break;                                           \
 		}                                                        \
