@@ -1,0 +1,14 @@
+_bak
+/src/*.session
+/src/main.exe
+/src/a.exe
+/src/_unused/mvhist.h
+/src/_unused/board.c
+/src/_unused/board.h
+/src/_unused/gs.c
+/src/_unused/gs.h
+/src/_unused/mvhist.c
+_unused
+/src/_bak/01_after_fixing_saving_long_replays
+/replays/Sun_Jul_13_203447_2014.sav
+/replays/Wed_Jul_16_205723_2014.sav
