@@ -15,7 +15,7 @@ gradually cleaning it up, adding appropriate comments, and removing outdated
 ones.
 
 This document is meant as a starting point to help you browsing through the
-source-code. I may be also be useful if you decide to contribute to the project,
+source-code. I may also be useful if you decide to contribute to the project,
 or fork it for independent development.
 
 Classes
