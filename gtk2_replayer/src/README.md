@@ -289,7 +289,7 @@ and depending on the desired build, type one of the following commands:
 - **for release-builds ( `global_debugOn = false` )**  
 gcc -o gtk2_player.exe \*.c -std=c99 -O3 \`pkg-config --cflags --libs gtk+-2.0\` -mwindows
 
-- **for debug-builds ( `global_debugOn = false` )**  
+- **for debug-builds ( `global_debugOn = true` )**  
 gcc -o gtk2_player.exe \*.c std=c99 -g3 -pedantic -Wall -Wextra \`pkg-config --cflags --libs gtk+-2.0\`
 
 The executable file `gtk2_player.exe` will be created. You may run it by typing:
@@ -318,7 +318,7 @@ desired build, type one of the following commands:
 - **for release-builds ( `global_debugOn = false` )**  
 gcc -o gtk2\_player.exe \*.c -std=c99 -O3 %GTK2_COMPILE% -mwindows
 
-- **for debug-builds ( `global_debugOn = false` )**  
+- **for debug-builds ( `global_debugOn = true` )**  
 gcc -o gtk2\_player.exe \*.c std=c99 -g3 -pedantic -Wall -Wextra %GTK2_COMPILE%
 
 The executable file `gtk2_player.exe` will be created. You may run it by typing:
