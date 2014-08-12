@@ -1,0 +1,25 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="17">
+            <File firstVisibleLine="37" xOffset="0" scrollWidth="3069" startPos="2788" endPos="2788" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\text.h" backupFilePath="" originalFileLastModifTimestamp="1407053595" />
+            <File firstVisibleLine="56" xOffset="0" scrollWidth="3069" startPos="1931" endPos="1945" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\misc.h" backupFilePath="" originalFileLastModifTimestamp="1407267257" />
+            <File firstVisibleLine="106" xOffset="0" scrollWidth="1232" startPos="2616" endPos="2616" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\misc.c" backupFilePath="" originalFileLastModifTimestamp="1407308132" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1056" startPos="64" endPos="64" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gamedata.h" backupFilePath="" originalFileLastModifTimestamp="1406829780" />
+            <File firstVisibleLine="160" xOffset="0" scrollWidth="1056" startPos="4165" endPos="4165" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gamedata.c" backupFilePath="" originalFileLastModifTimestamp="1407267215" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="869" startPos="0" endPos="0" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_locale.h" backupFilePath="" originalFileLastModifTimestamp="1406106682" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1056" startPos="618" endPos="618" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_locale.c" backupFilePath="" originalFileLastModifTimestamp="1406534672" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1232" startPos="125" endPos="125" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_menus.h" backupFilePath="" originalFileLastModifTimestamp="1406882386" />
+            <File firstVisibleLine="163" xOffset="0" scrollWidth="3069" startPos="4184" endPos="4212" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_menus.c" backupFilePath="" originalFileLastModifTimestamp="1407094093" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="3069" startPos="0" endPos="0" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_board.h" backupFilePath="" originalFileLastModifTimestamp="1406913902" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="3069" startPos="0" endPos="0" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_board.c" backupFilePath="" originalFileLastModifTimestamp="1406914111" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="1056" startPos="281" endPos="312" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_statusbar.h" backupFilePath="" originalFileLastModifTimestamp="1406878282" />
+            <File firstVisibleLine="35" xOffset="0" scrollWidth="1232" startPos="1131" endPos="1131" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_statusbar.c" backupFilePath="" originalFileLastModifTimestamp="1407060668" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="3069" startPos="0" endPos="0" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_dialogs.h" backupFilePath="" originalFileLastModifTimestamp="1407052890" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="3069" startPos="0" endPos="0" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui_dialogs.c" backupFilePath="" originalFileLastModifTimestamp="1407085983" />
+            <File firstVisibleLine="26" xOffset="0" scrollWidth="1056" startPos="637" endPos="637" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui.h" backupFilePath="" originalFileLastModifTimestamp="1407094093" />
+            <File firstVisibleLine="1306" xOffset="0" scrollWidth="1232" startPos="35898" endPos="35926" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\gui.c" backupFilePath="" originalFileLastModifTimestamp="1407267345" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="3069" startPos="397" endPos="397" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_replayer\src\main.c" backupFilePath="" originalFileLastModifTimestamp="1407307951" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>
