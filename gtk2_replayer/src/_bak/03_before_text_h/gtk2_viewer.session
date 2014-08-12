@@ -1,0 +1,16 @@
+<NotepadPlus>
+    <Session activeView="0">
+        <mainView activeIndex="8">
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="869" startPos="0" endPos="0" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\misc.h" backupFilePath="" originalFileLastModifTimestamp="1406125414" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="869" startPos="313" endPos="313" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\misc.c" backupFilePath="" originalFileLastModifTimestamp="1406107310" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="869" startPos="0" endPos="0" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\gui_locale.h" backupFilePath="" originalFileLastModifTimestamp="1406106682" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="880" startPos="0" endPos="0" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\gui_locale.c" backupFilePath="" originalFileLastModifTimestamp="1406149966" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="880" startPos="0" endPos="0" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\gui_menus.h" backupFilePath="" originalFileLastModifTimestamp="1406149244" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="880" startPos="0" endPos="0" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\gui_menus.c" backupFilePath="" originalFileLastModifTimestamp="1406148863" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="924" startPos="0" endPos="0" selMode="0" lang="C++" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\gui.h" backupFilePath="" originalFileLastModifTimestamp="1406165131" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="924" startPos="0" endPos="0" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\gui.c" backupFilePath="" originalFileLastModifTimestamp="1406152886" />
+            <File firstVisibleLine="0" xOffset="0" scrollWidth="924" startPos="0" endPos="0" selMode="0" lang="C" encoding="-1" filename="C:\unix\mysrc\c\games\2048\_GitForked\gtk2_viewer\main.c" backupFilePath="" originalFileLastModifTimestamp="1406165209" />
+        </mainView>
+        <subView activeIndex="0" />
+    </Session>
+</NotepadPlus>

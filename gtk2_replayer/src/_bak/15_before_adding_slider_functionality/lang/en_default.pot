@@ -1,0 +1,350 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: GTK+2 Demo - Die\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-02-04 22:35+0200\n"
+"PO-Revision-Date: 2013-02-05 21:25+0200\n"
+"Last-Translator: migf1 <mig_f1@hotmail.com>\n"
+"Language-Team: migf1 <mig_f1@hotmail.com>\n"
+"Language: English (default)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-SourceCharset: windows-1253\n"
+
+#: gui/dice.glade:482
+msgid ""
+" BaseDelay\n"
+"\n"
+" Fixed amount of time in microseconds, to be used\n"
+" as the default delay between any two consecutive\n"
+" steps during the animation of the die.\n"
+"\n"
+" It may be progressively increased after every step, \n"
+" if Friction is set to a non-zero value (see below)."
+msgstr ""
+
+#: gui/dice.glade:534
+msgid ""
+" Friction (or StepDelay)\n"
+"\n"
+" Fixed amount of time in microseconds, to fake\n"
+" progressive friction during the animation of the\n"
+" die.\n"
+"\n"
+" The value specified here is repeatedly added to\n"
+" the value of BaseDelay (see above) after every \n"
+" animation step, so rolling is progressively slowed\n"
+" down.\n"
+"\n"
+" The bigger this value is, the bigger is the rate\n"
+" of the slowing-down during the progress of the\n"
+" animation."
+msgstr ""
+
+#: gui/dice.glade:419
+msgid ""
+" MaxSteps\n"
+"\n"
+" Maximum number of times the die will move per roll. \n"
+" The bigger this value is, the longer it takes for the\n"
+" animation to get completed.\n"
+"\n"
+" A complete rolling-animation will consume this many \n"
+" Steps, something like Frames if it was implemented\n"
+" as a true animation, but it is not.\n"
+"\n"
+" Thus, if the specified MaxSteps are more than 32\n"
+" for the 3D effect or more than 6 for the 2D effect\n"
+" (that's how many image-files it takes to implement\n"
+" each of those effects) then the animation changes\n"
+" direction.\n"
+"\n"
+" If the specified MaxSteps are less the than those\n"
+" limits, the animation simply stops prematurely."
+msgstr ""
+
+#: gtk_dice.c:104
+#, c-format
+msgid " Result: %d"
+msgstr ""
+
+#: gtk_dice.c:103
+#, c-format
+msgid " Spin: %03d | Frame: %03d | Delay: %06ld"
+msgstr ""
+
+#: gui/dice.glade:179
+msgid ""
+" This option switches the GUI language according\n"
+" to the values of the environment variables LANG \n"
+" and LANGUAGE.\n"
+"\n"
+" If they are not set, or if there are no translation\n"
+" data available for the locale they define, then the \n"
+" English language is used as fallback.\n"
+"\n"
+" The menu-entry is disabled when the program\n"
+" starts, because the language dictated by LANG \n"
+" and LANGUAGE is already active, regardless of\n"
+" possible fallbacks.\n"
+" \n"
+" A fallback does not visually disable Engish in the\n"
+" menu (the user can select it) so it is clear that\n"
+" English was not explicitly selected by the user.\n"
+"\n"
+" Please not that both LANG & LANGUAGE must\n"
+" be defined before program launch, otherwise a\n"
+" fallback to English will occur.\n"
+"\n"
+" For example, if LANG is set to \"el_GR.UTF-8\"\n"
+" and LANGUAGE to \"el\" (both without quotes)\n"
+" in the environment, then the program will use\n"
+" the Greek language immediately."
+msgstr ""
+
+#: gui/dice.glade:333
+msgid ""
+" When this option is enabled, the program\n"
+" outputs extra messages to the stdout &\n"
+" stderr streams (this means the standard\n"
+" command-line console on most systems).\n"
+"\n"
+" In order to see those messages during the \n"
+" execution of the program, you should start \n"
+" it from the command-line.\n"
+"\n"
+" On Windows, if you compile the sources\n"
+" with the MinGW toolchain without using the \n"
+" linker flag \"-mwindows\", a console window\n"
+" will open automatically at every launch of\n"
+" the program (unless of course is already\n"
+" launched from the command-line).\n"
+"\n"
+" Debugging messages are always displayed \n"
+" in English, since the Windows console does\n"
+" not really like UTF-8 (it is possible to make\n"
+" it behave properly, but it is not really worth\n"
+" the extra effort required by both the user\n"
+" and the programmer)."
+msgstr ""
+
+#: gtk_dice.c:102
+msgid "...rolling..."
+msgstr ""
+
+#: gui/dice.glade:619
+msgid "<b>Settings</b>"
+msgstr ""
+
+#: gtk_dice.c:100
+msgid "Alert Box"
+msgstr ""
+
+#: gui/dice.glade:467
+msgid "BaseDelay"
+msgstr ""
+
+#: gui/dice.glade:328
+msgid "Debugging mode"
+msgstr ""
+
+#: gui/dice.glade:589
+msgid "Default 2D"
+msgstr ""
+
+#: gui/dice.glade:573
+msgid "Default 3D"
+msgstr ""
+
+#: gtk_dice.c:121
+#, c-format
+msgid ""
+"File\t: %s\n"
+"Func\t: %s\n"
+"Line\t: %d\n"
+"\n"
+"%s"
+msgstr ""
+
+#: gtk_dice.c:538 gtk_dice.c:571 gtk_dice.c:603 gtk_dice.c:642 gtk_dice.c:687
+#: gtk_dice.c:1190 gtk_dice.c:1333 gtk_dice.c:1379 gtk_dice.c:1431
+msgid "Found invalid GUI elements"
+msgstr ""
+
+#: gtk_dice.c:94
+msgid "Free for all"
+msgstr ""
+
+#: gui/dice.glade:520
+msgid "Friction"
+msgstr ""
+
+#: gtk_dice.c:90
+msgid "GTK+2 Demo - Die"
+msgstr ""
+
+#: gtk_dice.c:1181
+msgid "GUI is not linked to Core"
+msgstr ""
+
+#: gtk_dice.c:1069
+msgid "Invalid GUI element (gui->appWindow or gui->dlgAbout)"
+msgstr ""
+
+#: gtk_dice.c:875 gtk_dice.c:922 gtk_dice.c:983
+msgid "Invalid GUI element (gui->appWindow)"
+msgstr ""
+
+#: gtk_dice.c:724
+msgid "Invalid GUI element (gui->menu.itemEnglish)"
+msgstr ""
+
+#: gtk_dice.c:738
+msgid "Invalid GUI element (gui->menu.itemEnvLang)"
+msgstr ""
+
+#: gtk_dice.c:731
+msgid "Invalid GUI element (gui->menu.itemGreek)"
+msgstr ""
+
+#: gtk_dice.c:1741 gtk_dice.c:1786 gtk_dice.c:1839 gtk_dice.c:1927
+#: gtk_dice.c:2015 gtk_dice.c:2096 gtk_dice.c:2151 gtk_dice.c:2203
+#: gtk_dice.c:2255 gtk_dice.c:2353 gtk_dice.c:2473 gtk_dice.c:2630
+#: gtk_dice.c:2675
+msgid "Invalid pointer arg (builder)"
+msgstr ""
+
+#: gtk_dice.c:2799
+msgid "Invalid pointer arg (fnameGlade)"
+msgstr ""
+
+#: gtk_dice.c:718
+msgid "Invalid pointer arg (gui or menuItem)"
+msgstr ""
+
+#: gtk_dice.c:529 gtk_dice.c:562 gtk_dice.c:594 gtk_dice.c:633 gtk_dice.c:677
+#: gtk_dice.c:869 gtk_dice.c:916 gtk_dice.c:979 gtk_dice.c:1063
+#: gtk_dice.c:1107 gtk_dice.c:1177 gtk_dice.c:1329 gtk_dice.c:1375
+#: gtk_dice.c:1427 gtk_dice.c:1479 gtk_dice.c:1521 gtk_dice.c:1558
+#: gtk_dice.c:1594 gtk_dice.c:1634 gtk_dice.c:1674 gtk_dice.c:1707
+#: gtk_dice.c:1737 gtk_dice.c:1782 gtk_dice.c:1835 gtk_dice.c:1923
+#: gtk_dice.c:2011 gtk_dice.c:2092 gtk_dice.c:2147 gtk_dice.c:2199
+#: gtk_dice.c:2251 gtk_dice.c:2349 gtk_dice.c:2469 gtk_dice.c:2626
+#: gtk_dice.c:2671 gtk_dice.c:2795
+msgid "Invalid pointer arg (gui)"
+msgstr ""
+
+#: gtk_dice.c:460 gtk_dice.c:504
+msgid "Invalid pointer arg (hslider)"
+msgstr ""
+
+#: gui/dice.glade:405
+msgid "MaxSteps"
+msgstr ""
+
+#: gtk_dice.c:997 gtk_dice.c:2745
+msgid ""
+"No locale environment was found.\n"
+"ENGLISH is used as fallback language."
+msgstr ""
+
+#: gui/dice.glade:265
+msgid "Roll"
+msgstr ""
+
+#: gtk_dice.c:92
+msgid ""
+"Small GTK+2 Demo\n"
+"faking 3D/2D die-animation"
+msgstr ""
+
+#: gui/dice.glade:365
+msgid "Use 2D rolling-effect"
+msgstr ""
+
+#: gui/dice.glade:226
+msgid "_About"
+msgstr ""
+
+#: gui/dice.glade:101
+msgid "_File"
+msgstr ""
+
+#: gui/dice.glade:156
+msgid "_Greek"
+msgstr ""
+
+#: gui/dice.glade:218
+msgid "_Help"
+msgstr ""
+
+#: gui/dice.glade:135
+msgid "_Language"
+msgstr ""
+
+#: gui/dice.glade:115
+msgid "_Quit"
+msgstr ""
+
+#: gtk_dice.c:101 gui/dice.glade:279
+msgid "_Roll"
+msgstr ""
+
+#: gui/dice.glade:134
+msgid "change the GUI language dynamically"
+msgstr ""
+
+#: gtk_dice.c:1485 gtk_dice.c:1527
+msgid "check-button has not been properly created"
+msgstr ""
+
+#: gui/dice.glade:230
+msgid "detailed information"
+msgstr ""
+
+#: gui/dice.glade:119
+msgid "exit program"
+msgstr ""
+
+#: gtk_dice.c:464 gtk_dice.c:508
+msgid "hslider has not been properly created"
+msgstr ""
+
+#: gui/dice.glade:403 gui/dice.glade:465 gui/dice.glade:518
+msgid "mouseover the slider for details"
+msgstr ""
+
+#: gui/dice.glade:595
+msgid "reset 2D settings"
+msgstr ""
+
+#: gui/dice.glade:579
+msgid "reset 3D settings"
+msgstr ""
+
+#: gtk_dice.c:1565 gtk_dice.c:1601 gtk_dice.c:1641
+msgid "slider has not been properly created"
+msgstr ""
+
+#: gui/dice.glade:147
+msgid "switch to English"
+msgstr ""
+
+#: gui/dice.glade:160
+msgid "switch to Greek"
+msgstr ""
+
+#: gui/dice.glade:370
+msgid "toggle between 2D & 3D animation"
+msgstr ""
+
+#: gui/dice.glade:175
+msgid "use En_vironment"
+msgstr ""
