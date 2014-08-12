@@ -10,3 +10,17 @@ _org
 /gtk2_replayer/src/gui/_org/playback
 /gtk2_replayer/src/gui/_bak/black_tools
 /gtk2_replayer/src/gui/_bak/brown_tools
+/gtk2_replayer/src/a.exe
+/gtk2_replayer/src/*.session
+/gtk2_replayer/src/_unused.c
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_stop.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_first.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_jumpto.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_last.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_minus.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_next.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_pause.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_play.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_plus.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_prev.png
+/gtk2_replayer/src/gui/_bak/brown_tools/tool_speed_reset.png
