@@ -1003,10 +1003,12 @@ GuiMenus *gui_get_menus( const Gui *gui )
 	return gui->menus;
 }
 
+#if 0
 /* ---------------------------------------------------
- * 
+ * Currently Unused
  * ---------------------------------------------------
  */
+
 GtkWidget *gui_get_statusbar_widget( const Gui *gui )
 {
 	if ( NULL == gui ) {
@@ -1017,7 +1019,7 @@ GtkWidget *gui_get_statusbar_widget( const Gui *gui )
 }
 
 /* ---------------------------------------------------
- * 
+ * Currently Unused
  * ---------------------------------------------------
  */
 guint gui_get_statusbar_contextId( const Gui *gui )
@@ -1028,6 +1030,7 @@ guint gui_get_statusbar_contextId( const Gui *gui )
 	}
 	return gui_statusbar_get_contextId( gui->statusbar );
 }
+#endif /* #if 0 */
 
 /* ---------------------------------------------------
  * 
