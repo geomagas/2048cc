@@ -68,8 +68,8 @@ extern GuiMenus      *gui_get_menus( const Gui *gui );
 extern GtkWidget     *gui_get_board_container( Gui *gui );
 
 /* statusbar related */
-extern GtkWidget     *gui_get_statusbar_widget( const Gui *gui );
-extern guint         gui_get_statusbar_contextId( const Gui *gui );
+//extern GtkWidget     *gui_get_statusbar_widget( const Gui *gui );
+//extern guint         gui_get_statusbar_contextId( const Gui *gui );
 
 /* dialogs related */
 extern GuiDialogs    *gui_get_dialogs( Gui *gui );
