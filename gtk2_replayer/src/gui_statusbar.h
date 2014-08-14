@@ -12,6 +12,8 @@
 #ifndef GUI_STATUSBAR_H
 #define GUI_STATUSBAR_H
 
+#include <gtk/gtk.h>    /* GtkBuilder */
+
 /* Forward declaration of the GuiStatusbar "class" as an opaque data-type. */
 typedef struct _GuiStatusbar GuiStatusbar;
 

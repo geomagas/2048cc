@@ -72,7 +72,7 @@ struct _GuiStatusbar
 /* ---------------------------------------------------
  * gboolean gui_statusbar_refresh():
  *
- * Update the text of the specified Guistatusbar object (gsb)
+ * Update the text of the specified GuiStatusbar object (gsb)
  * and display the updated widget of the object.
  *
  * NOTES:
@@ -107,7 +107,7 @@ gboolean gui_statusbar_refresh( GuiStatusbar *gsb, const Gui *gui )
 		return FALSE;
 	}
 
-	/* get need info from the Gui object */
+	/* get needed info from the Gui object */
 	fname   = gui_get_gamedata_fname( gui );
 	dim     = gui_get_gamedata_dim( gui );
 	gamewon = gui_get_gamedata_gamewon( gui );
@@ -151,7 +151,7 @@ gboolean gui_statusbar_refresh( GuiStatusbar *gsb, const Gui *gui )
  * (Initializer) gboolean gui_statusbar_init_from_builder():
  *
  * Initialize the specified GuiStatusbar object (gsb), according
- * the specified GtkBuilder object (builder) and the specified
+ * to the specified GtkBuilder object (builder) and the specified
  * Gui object (gui). Return FALSE on error, TRUE otherwise.
  *
  * NOTES:
@@ -163,7 +163,7 @@ gboolean gui_statusbar_refresh( GuiStatusbar *gsb, const Gui *gui )
  *   top of this file).
  *
  *   The initialization (and displaying) of the text to be
- *   outputted in the status-bar is actuyally handled in the
+ *   outputted in the status-bar is actually handled in the
  *   function: gui_statusbar_refresh()).
  *
  *   The GTK+2 callback function: gtk_widget_destroyed()

@@ -1,3 +1,55 @@
+/****************************************************************
+ * This file is part of the "2048cc GTK+2 Replayer".
+ *
+ * Copyright:    2014 (c) migf1 <mig_f1@hotmail.com>
+ * License:      Free Software (see comments in main.c for limitations)
+ * Dependencies: misc.h, text.h gui.h gui_dialogs.h
+ * --------------------------------------------------------------
+ * 
+ * For generic guidelines regarding the sources of this project
+ * (including the coding-style) please visit the following link:
+ * https://github.com/geomagas/2048cc/blob/dev_gtk2_replayer/gtk2_replayer/src/BROWSING.md
+ *
+ * --------------------------------------------------------------
+ * Private implementation of the GuiDialogs "class". The accompanying
+ * header file "gui_dialogs.h" exposes publicly the "class" as an opaque
+ * data-type.
+ *
+ * The GuiDialogs "class" does NOT encapsulate a generic, re-usable
+ * abstraction over GTK+2 dialogs. Its encapsulated abstraction is
+ * very specific to this particular project.
+ *
+ * The constructor, the initializer and the destructor of the "class"
+ * act collectively on all the dialogs. However, the "class" also
+ * provides separate, specialized functions for each dialog (usually
+ * getters, but not only).
+ *
+ * A GuiDialogs object does NOT have direct access to data loaded
+ * from replay-files. It asks for them from an associated Gui object
+ * (which in turn, gets the requested data from a Gamedata object
+ * associated with it).
+ *
+ * Actually, the association between a GuiDialogs and a Gui object
+ * is NOT built into the definition of the GuiDialogs "class". Put
+ * otherwise, the struct _GuiDialogs does NOT contain a reference
+ * to a Gui object.
+ *
+ * Rather, when a public function of the GuiDialogs "class" needs
+ * to communicate with a Gui object, the latter is passed as an
+ * argument to that public function. For an example, have a look
+ * at the function: gui_dialogs_do_jumpto() which expects the Gui
+ * object as an argument.
+ *
+ * Construction & initialization of a GuiDialogs object is done by
+ * the caller in two separate steps. The initializer expects a valid
+ * GtkBuilder as an argument, from which it initializes the internal
+ * GTK+2 widgets of all the dialogs. Keep in mind that each dialog
+ * has its own representation inside the "class" (in other words,
+ * dialogs are NOT abstracted uniformly). 
+ *
+ ****************************************************************
+ */
+
 #define GUI_DIALOGS_C
 
 #include <gtk/gtk.h>
@@ -14,6 +66,16 @@
 #include "gui_dialogs.h"
 #include "gui.h"
 
+/* The GuiDialogs "class" consists of specialized abstractions
+ * for every dialog used in the program. Each dialog abstraction
+ * consists of a collection of GTK+2 widgets, needed for handling
+ * ONLY that particular dialog. The first widget of all dialog
+ * abstractions is called "root" and reflects the root window of
+ * that particular dialog.
+ *
+ * The class is exposed publicly as an opaque data-type,
+ * via the header file: "gui_dialogs.h").
+ */
 struct _GuiDialogs
 {
 	struct {
@@ -30,15 +92,19 @@ struct _GuiDialogs
 
 #ifdef G_OS_WIN32
 /* ---------------------------------------------------
- * Callback function connected to the GTK+ "activate-link"
- * signal, for the dialog About.
+ * gboolean _on_activate_link_in_about_dialog:
  *
- * When run on Win32, GTK+ (Gio) cannot open links,
- * thus we overwrite the default behaviour by using
- * our own Win32 specific callback function.
+ * Callback function connected to the GTK+ "activate-link"
+ * signal, which is emitted when a link button is clicked
+ * inside the about-dialog. Return FALSE on error, TRUE
+ * otherwise.
+ *
+ * NOTE: When run on Win32, GTK+2's file-engine (Gio) cannot
+ *       open links, thus we overwrite the default behaviour
+ *       by using this custom Win32 specific callback function.
  * ---------------------------------------------------
  */
-static gboolean _on_activate_link_dlgAbout(
+static gboolean _on_activate_link_in_about_dialog(
 	GtkWidget  *link,
 	gchar      *uri,
 	gpointer   *unused
@@ -66,36 +132,53 @@ static gboolean _on_activate_link_dlgAbout(
 #endif	/* #ifdef G_OS_WIN32 */
 
 /* ---------------------------------------------------
- * Initialize the "About" dialog.
+ * (Private Initializer) gboolean _init_about_dialog():
  *
- * Copies the GUI dialog "About" from the specified GTK+
- * builder into my GUI abstraction: gui->dialogs->about.root,
- * it initializes the dialog's contents and it connects
- * callback functions.
+ * Initialize the about-dialog of the specified GuiDialogs
+ * object (dialogs), according to the specified GtkBuilder
+ * object (builder). Return FALSE on error, TRUE otherwise.
  *
- * The "About" dialog is defined of type GtkAboutDialog
- * in the Glade file, which provides a standardized way
- * of presenting information. However, I haven't found
- * an easy way to access the members of its action-area,
- * namely the buttons: "Credits", "License" and "Close".
+ * NOTES:
  *
- * Consequently, I cannot mark the labels of those buttons
- * as translatable, for the GNU-gettext library (I could
- * implement it as a normal GtkDialog, but I prefer to
- * learn the GtkAboutDialog internals and use them in
- * a future version).
+ *   The function first copies the about-dialog root widget
+ *   from the builder into the dialogs->about abstraction.
+ *   The widget in the builder must be of type GtkDialogAbout.
  *
- * NOTE:
- *	The callback function: on_activate_link_dlgAbout()
- *	is connected to the "activate-link" signal ONLY
- *	when the program is compiled under Win32. GTK+'s
- *	file-engine (Gio) has trouble registering the
- *	"http://" and "mailto:" protocols under Win32,
- *	so I conditionally use the Win32 API if needed.
+ *   It then sets up the GtkDialogAbout properties of the
+ *   widget (such as icon, logo, app name, app authors,
+ *   etc) and connects callback functions to it.
  *
- *	The GTK+ callback function: gtk_widget_destroyed()
- *	ensures that the dialog's pointer will be set to
- *	NULL after the widget gets destroyed.
+ *   The GTK+2 callback function: gtk_widget_destroyed()
+ *   ensures that the widget pointer will be set to NULL
+ *   after the widget gets destroyed.
+ *
+ *   The callback function: _on_activate_link_in_about_dialog()
+ *   is conditionally connected to the "activate-signal"
+ *   of the about-dialog, only when Windows is the compilation
+ *   platform. That's because GTK+2's file-engine (Gio) seems
+ *   to have trouble correctly registering the "http://" and
+ *   the "mailto:" protocols under Win32.
+ *
+ *   On other platforms, gtk_show_uri() is set automatically
+ *   by GTK+2 as the default callback function for the
+ *   "activate-link" signal.
+ *
+ * TODO:
+ *
+ *   The GtkAboutDialog widget provides a standardized 
+ *   way of presenting about-dialogs. However, Glade
+ *   does not seem to allow direct access to the strings
+ *   in its action-area, namely the buttons: "Credits",
+ *   "License" and "Close".
+ *
+ *   Consequently, I cannot mark the labels of those
+ *   buttons as translatable for the GNU-gettext
+ *   library, from within Glade.
+ *
+ *   I must dig a bit deeper into the GtkAboutDialog
+ *   internals. If that doesn't help, then most probably
+ *   I will re-implement the about-dialog as a normal
+ *   GtkDialog widget.
  * ---------------------------------------------------
  */
 static inline gboolean _init_about_dialog(
@@ -125,22 +208,18 @@ static inline gboolean _init_about_dialog(
 		GTK_ABOUT_DIALOG( *root ),
 		gettext( TXT_APP_NAME )
 		);
-
 	gtk_about_dialog_set_version(
 		GTK_ABOUT_DIALOG( *root ),
 		gettext( TXT_APP_VERSION )
 		);
-
 	gtk_about_dialog_set_comments(
 		GTK_ABOUT_DIALOG( *root ),
 		TXT_APP_DESCRIPTION
 		);
-
 	gtk_about_dialog_set_copyright(
 		GTK_ABOUT_DIALOG( *root ),
 		gettext( TXT_APP_COPYRIGHT )
 		);
-
 	gtk_about_dialog_set_wrap_license(
 		GTK_ABOUT_DIALOG( *root ),
 		TRUE
@@ -149,22 +228,18 @@ static inline gboolean _init_about_dialog(
 		GTK_ABOUT_DIALOG( *root ),
 		_(TXT_APP_LICENSE)
 		);
-
 	gtk_about_dialog_set_authors(
 		GTK_ABOUT_DIALOG( *root ),
 		authors
 		);
-
 	gtk_about_dialog_set_documenters(
 		GTK_ABOUT_DIALOG( *root ),
 		authors
 		);
-
 	gtk_about_dialog_set_artists(
 		GTK_ABOUT_DIALOG( *root ),
 		artists
 		);
-
 	gtk_about_dialog_set_website_label(
 		GTK_ABOUT_DIALOG( *root ),
 		gettext( TXT_APP_WEBSITE_LABEL )
@@ -186,7 +261,7 @@ static inline gboolean _init_about_dialog(
 	g_signal_connect(
 		G_OBJECT( *root ),
 		"activate-link",
-		G_CALLBACK( _on_activate_link_dlgAbout ),
+		G_CALLBACK( _on_activate_link_in_about_dialog ),
 		NULL
 		);
 #endif
@@ -203,16 +278,22 @@ static inline gboolean _init_about_dialog(
 }
 
 /* ---------------------------------------------------
- * Initialize the "Jumpto" dialog.
+ * (Private Initializer) gboolean _init_jumpto_dialog():
  *
- * Copies the GUI dialog "About" from the specified GTK+
- * builder into my GUI abstraction: gui->dlgJumpto, it
- * initializes the dialog's contents and it connects
- * callback functions.
+ * Initialize the jumpto-dialog of the specified GuiDialogs
+ * object (dialogs), according to the specified GtkBuilder
+ * object (builder). Return FALSE on error, TRUE otherwise.
  *
- * The GTK+ callback function: gtk_widget_destroyed()
- * ensures that the pointer of the connected widget
- * will be set to NULL after the widget gets destroyed.
+ * NOTES:
+ *
+ *   The function copies the jumpto-dialog widgets from
+ *   the builder into the dialogs->jumpto abstraction,
+ *   sets up an icon and the position of the dialog,
+ *   and connects callback functions to it.
+ *
+ *   The GTK+ callback function: gtk_widget_destroyed()
+ *   ensures that the pointer of the connected widget
+ *   will be set to NULL after the widget gets destroyed.
  * ---------------------------------------------------
  */
 static inline gboolean _init_jumpto_dialog(
@@ -223,7 +304,7 @@ static inline gboolean _init_jumpto_dialog(
 	/* just for brevity later on */
 	GtkWidget **pw = NULL;        /* pointer to a widget pointer */
 
-	/* load the root window of the dialog */
+	/* load the root widget of the dialog */
 	pw  = &dialogs->jumpto.root;
 	*pw = GTK_WIDGET( gtk_builder_get_object(builder, "dlgJumpto") );
 
@@ -232,7 +313,7 @@ static inline gboolean _init_jumpto_dialog(
 	gtk_window_set_icon_from_file( GTK_WINDOW(*pw), FNAME_APPICON, NULL );
 	gtk_window_set_opacity( GTK_WINDOW(*pw), 0.90 );
 
-	/* */
+	/* connect callback functions to the root widget */
 	g_signal_connect(
 		G_OBJECT( *pw ),
 		"destroy",
@@ -255,7 +336,14 @@ static inline gboolean _init_jumpto_dialog(
 }
 
 /* ---------------------------------------------------
- * 
+ * (Destructor) GuiDialogs *gui_dialogs_free():
+ *
+ * Release the memory reserved for the specified GuiDialogs
+ * object (dialogs) and return NULL (so the caller nay assign
+ * it back to the object pointer).
+ *
+ * NOTE: A GuiDialogs object abstracts ALL the dialogs used
+ *       by the program.
  * ---------------------------------------------------
  */
 GuiDialogs *gui_dialogs_free( GuiDialogs *dialogs )
@@ -267,7 +355,20 @@ GuiDialogs *gui_dialogs_free( GuiDialogs *dialogs )
 }
 
 /* ---------------------------------------------------
- * 
+ * (Constructor) GuiDialogs *make_gui_dialogs():
+ *
+ * Reserve zero'ed memory for a GuiDialogs object
+ * and return a pointer to it, or NULL on error.
+ *
+ * NOTES:
+ *
+ *   On success, the constructed object is zero'ed,
+ *   so it's up to the caller to initialize it with
+ *   proper values. Currently, this can be done with
+ *   the function: gui_dialogs_init_from_builder().
+ *
+ *   On another note, just remember that a GuiDialogs
+ *   object abstracts ALL the dialogs used by the program.
  * ---------------------------------------------------
  */
 GuiDialogs *make_gui_dialogs( void )
@@ -282,17 +383,22 @@ GuiDialogs *make_gui_dialogs( void )
 }
 
 /* ---------------------------------------------------
- * Initialize the dialogs of the program.
+ * (Initializer) gboolean gui_dialogs_init_from_builder():
  *
- * Copies the dialog widgets from the specified GTK+ builder
- * into my GUI abstraction: gui->dialogs (GuiDialogs), it connects
- * callback functions to them and it initializes their visual
- * appearance.
+ * Initialize the specified GuiDialogs object (dialogs),
+ * according to the specified GtkBuilder object (builder).
+ * Return FALSE on error, TRUE otherwise.
  *
- * NOTE:
- *	The GTK+ callback function: gtk_widget_destroyed()
- *	ensures that the widget pointer will be set to NULL
- *	after the widget gets destroyed.
+ * NOTES:
+ *
+ *   A GuiDialogs object abstracts ALL the dialogs used by
+ *   the program. The individual initializations are done
+ *   via calls to corresponding private functions.
+ *
+ *   The specified Gui object argument, does NOT take part
+ *   in the initialization process of the dialogs. It is
+ *   used only for displaying error-messages in alert-boxes,
+ *   if needed.
  * ---------------------------------------------------
  */
 gboolean gui_dialogs_init_from_builder(
@@ -301,6 +407,7 @@ gboolean gui_dialogs_init_from_builder(
 	Gui         *gui
 	)
 {
+	/* sanity checks */
 	if ( NULL == gui ) {
 		DBG_STDERR_MSG( "NULL pointer argument (gui)" );
 		return FALSE;
@@ -327,7 +434,11 @@ gboolean gui_dialogs_init_from_builder(
 }
 
 /* ---------------------------------------------------
+ * (Getter) GtkWidget *gui_dialogs_get_about_root():
  *
+ * Return a pointer to the root widget of the about-dialog,
+ * stored in the specified GuiDialogs object, or NULL on
+ * error.
  * ---------------------------------------------------
  */
 GtkWidget *gui_dialogs_get_about_root( GuiDialogs *dialogs )
@@ -344,7 +455,11 @@ GtkWidget *gui_dialogs_get_about_root( GuiDialogs *dialogs )
 }
 
 /* ---------------------------------------------------
+ * (Getter) GtkWidget *gui_dialogs_get_jumpto_root():
  *
+ * Return a pointer to the root widget of the jumpto-dialog,
+ * stored in the specified GuiDialogs object, or NULL on
+ * error.
  * ---------------------------------------------------
  */
 GtkWidget *gui_dialogs_get_jumpto_root( GuiDialogs *dialogs )
@@ -361,7 +476,11 @@ GtkWidget *gui_dialogs_get_jumpto_root( GuiDialogs *dialogs )
 }
 
 /* ---------------------------------------------------
+ * (Getter) GtkWidget *gui_dialogs_get_jumpto_lblRange():
  *
+ * Return a pointer to the range label-widget of the
+ * jumpto-dialog, stored in the specified GuiDialogs
+ * object, or NULL on error.
  * ---------------------------------------------------
  */
 GtkWidget *gui_dialogs_get_jumpto_lblRange( GuiDialogs *dialogs )
@@ -378,7 +497,11 @@ GtkWidget *gui_dialogs_get_jumpto_lblRange( GuiDialogs *dialogs )
 }
 
 /* ---------------------------------------------------
+ * (Getter) GtkWidget *gui_dialogs_get_jumpto_lblCurrent():
  *
+ * Return a pointer to the current-move label-widget of
+ * the jumpto-dialog, stored in the specified GuiDialogs
+ * object, or NULL on error.
  * ---------------------------------------------------
  */
 GtkWidget *gui_dialogs_get_jumpto_lblCurrent( GuiDialogs *dialogs )
@@ -395,7 +518,11 @@ GtkWidget *gui_dialogs_get_jumpto_lblCurrent( GuiDialogs *dialogs )
 }
 
 /* ---------------------------------------------------
+ * (Getter) GtkWidget *gui_dialogs_get_jumpto_te():
  *
+ * Return a pointer to the  text-entry widget of the
+ * jumpto-dialog, stored in the specified GuiDialogs
+ * object, or NULL on error.
  * ---------------------------------------------------
  */
 GtkWidget *gui_dialogs_get_jumpto_te( GuiDialogs *dialogs )
@@ -412,7 +539,21 @@ GtkWidget *gui_dialogs_get_jumpto_te( GuiDialogs *dialogs )
 }
 
 /* ---------------------------------------------------
+ * gboolean gui_dialogs_do_jumpto():
  *
+ * Open the jumpto-dialog of the specified GuiDialogs object
+ * (dialogs), using the specified Gui object (gui) for setting
+ * the contents to be displayed inside the dialog, and for
+ * getting back the user input.
+ *
+ * NOTES:
+ *
+ *   The GuiDialogs object is not allowed to access directly the
+ *   data it needs to display inside the dialog. Likewise, it is
+ *   not allowed to apply the data read from the user.
+ *
+ *   Both the above tasks, are done via getters & setters of the
+ *   Gui object.
  * ---------------------------------------------------
  */
 gboolean gui_dialogs_do_jumpto( GuiDialogs *dialogs, Gui *gui )
@@ -424,7 +565,6 @@ gboolean gui_dialogs_do_jumpto( GuiDialogs *dialogs, Gui *gui )
 	GtkWidget *root = NULL;          /* dialog's root widget */
 	GtkEntry  *te   = NULL;          /* dialog's inner text-entry widget */
 	gint response   = GUI_RESPONSE_OK;
-//	char *txtOut    = NULL;          /* duplicate of te's text */
 	long int jumpto = 0;             /* te's text converted to long int */
 	char *tailptr   = NULL;          /* for strtol() */
 	gchar txt[SZMAX_DBGMSG] = {'\0'};/* set/get text of inner widgets */
